@@ -1,0 +1,617 @@
+{
+    "101": {
+        "ten": "Nguyễn Huỳnh Thanh Ngân",
+        "msv": "21247202",
+        "diem": "Vắng"
+    },
+    "102": {
+        "ten": "Income Phan Bảo Ngọc",
+        "msv": "24247100",
+        "diem": "Vắng"
+    },
+    "103": {
+        "ten": "Trần Ngọc Xuân Hiền",
+        "msv": "24247065",
+        "diem": 525
+    },
+    "104": {
+        "ten": "Nguyễn Hoàng Khương Duy",
+        "msv": "24247059",
+        "diem": 930
+    },
+    "105": {
+        "ten": "Đỗ Ngọc Trâm Anh",
+        "msv": "24247043",
+        "diem": "Vắng"
+    },
+    "106": {
+        "ten": "Nguyễn Bích An",
+        "msv": "24247041",
+        "diem": "Vắng"
+    },
+    "107": {
+        "ten": "Nguyễn Ngọc Bảo Trân",
+        "msv": "24247038",
+        "diem": 785
+    },
+    "108": {
+        "ten": "Phạm Thúy Hà",
+        "msv": "24247031",
+        "diem": "Vắng"
+    },
+    "109": {
+        "ten": "Lâm Viết Trình",
+        "msv": "24147149",
+        "diem": 505
+    },
+    "110": {
+        "ten": "Phạm Minh Hoàng",
+        "msv": "24147143",
+        "diem": 420
+    },
+    "111": {
+        "ten": "Trương Phạm Minh Uyên",
+        "msv": "24147135",
+        "diem": 340
+    },
+    "112": {
+        "ten": "Lương Trần Tố Quyên",
+        "msv": "24147112",
+        "diem": 675
+    },
+    "113": {
+        "ten": "Nguyễn Võ Phú Quí",
+        "msv": "24147111",
+        "diem": "Vắng"
+    },
+    "114": {
+        "ten": "Lê Yên Nhiên",
+        "msv": "24147101",
+        "diem": 335
+    },
+    "115": {
+        "ten": "Ngô Khánh Ngọc",
+        "msv": "24147094",
+        "diem": 645
+    },
+    "116": {
+        "ten": "Đào Thiên Long",
+        "msv": "24147085",
+        "diem": 420
+    },
+    "117": {
+        "ten": "Điền Hoà Khương",
+        "msv": "24147078",
+        "diem": 530
+    },
+    "118": {
+        "ten": "Văn Nguyễn Quỳnh Hương",
+        "msv": "24147069",
+        "diem": 465
+    },
+    "119": {
+        "ten": "Huỳnh Vũ Phương Thảo",
+        "msv": "24147044",
+        "diem": 450
+    },
+    "120": {
+        "ten": "Lê Huỳnh Hương Giang",
+        "msv": "24147034",
+        "diem": 450
+    },
+    "121": {
+        "ten": "Cao Hồ Bảo Thy",
+        "msv": "24147025",
+        "diem": 405
+    },
+    "122": {
+        "ten": "Võ Thị Thanh Tuyền",
+        "msv": "23247126",
+        "diem": 315
+    },
+    "123": {
+        "ten": "Mai Ngọc Thanh Trúc",
+        "msv": "23247122",
+        "diem": 875
+    },
+    "124": {
+        "ten": "Đỗ Nguyễn Uyên Thanh",
+        "msv": "23247109",
+        "diem": 465
+    },
+    "125": {
+        "ten": "Hứa Như Quỳnh",
+        "msv": "23247104",
+        "diem": 580
+    },
+    "126": {
+        "ten": "Hà Khánh Linh",
+        "msv": "23247078",
+        "diem": 700
+    },
+    "127": {
+        "ten": "Nguyễn Hoàng Khang",
+        "msv": "23247069",
+        "diem": 340
+    },
+    "128": {
+        "ten": "Vũ Thị Huyền Chang",
+        "msv": "23247045",
+        "diem": 335
+    },
+    "129": {
+        "ten": "Nguyễn Ngọc Lan Anh",
+        "msv": "23247037",
+        "diem": 485
+    },
+    "130": {
+        "ten": "Phạm Hoàng Nhật",
+        "msv": "23247025",
+        "diem": 605
+    },
+    "131": {
+        "ten": "Nguyễn Ngọc Anh",
+        "msv": "23247003",
+        "diem": 465
+    },
+    "132": {
+        "ten": "Nguyễn Đức Lâm",
+        "msv": "23200023",
+        "diem": "Vắng"
+    },
+    "133": {
+        "ten": "Trần Gia Bảo",
+        "msv": "23187026",
+        "diem": 865
+    },
+    "134": {
+        "ten": "Lê Ngọc Lan Anh",
+        "msv": "23187025",
+        "diem": "Vắng"
+    },
+    "135": {
+        "ten": "Nguyễn Lê Minh Thủy",
+        "msv": "23187021",
+        "diem": 515
+    },
+    "136": {
+        "ten": "Vũ Thị Hoài Phương",
+        "msv": "23187020",
+        "diem": 645
+    },
+    "137": {
+        "ten": "Nguyễn Diệu Anh",
+        "msv": "23187002",
+        "diem": 885
+    },
+    "138": {
+        "ten": "Lê Minh Tâm",
+        "msv": "23147130",
+        "diem": 865
+    },
+    "139": {
+        "ten": "Võ Trần Thục Hiền",
+        "msv": "23147067",
+        "diem": 580
+    },
+    "140": {
+        "ten": "Trương Mỹ Cát Tường",
+        "msv": "23147018",
+        "diem": 360
+    },
+    "141": {
+        "ten": "Đinh Vũ Nhật Quỳnh",
+        "msv": "23147016",
+        "diem": 625
+    },
+    "142": {
+        "ten": "Lê Anh Đức",
+        "msv": "23140076",
+        "diem": 485
+    },
+    "143": {
+        "ten": "Phạm Huy Trường Thịnh",
+        "msv": "23140041",
+        "diem": 525
+    },
+    "144": {
+        "ten": "Võ Ngọc Tiến",
+        "msv": "23120370",
+        "diem": 610
+    },
+    "145": {
+        "ten": "Trần Minh Trọng",
+        "msv": "23120100",
+        "diem": 550
+    },
+    "146": {
+        "ten": "Nguyễn Trương Nhật Duy",
+        "msv": "22177034",
+        "diem": 430
+    },
+    "147": {
+        "ten": "Nguyễn Đăng Dinh",
+        "msv": "22177033",
+        "diem": 445
+    },
+    "148": {
+        "ten": "Trầm Đặng Minh Sơn",
+        "msv": "22177024",
+        "diem": 600
+    },
+    "149": {
+        "ten": "Nguyễn Văn Thành Đạt",
+        "msv": "22177005",
+        "diem": 435
+    },
+    "150": {
+        "ten": "Lương Hồng Ngọc",
+        "msv": "22147081",
+        "diem": 560
+    },
+    "151": {
+        "ten": "Chu Thị Kim Lắm",
+        "msv": "22147056",
+        "diem": 400
+    },
+    "152": {
+        "ten": "Bạch Kim Khánh",
+        "msv": "22147050",
+        "diem": "Vắng"
+    },
+    "154": {
+        "ten": "Phan Võ Minh Tuệ",
+        "msv": "22127440",
+        "diem": 580
+    },
+    "155": {
+        "ten": "Lê Thị Thanh Thùy",
+        "msv": "22127411",
+        "diem": "Vắng"
+    },
+    "156": {
+        "ten": "Đinh Đức Thiện",
+        "msv": "22120343",
+        "diem": "Vắng"
+    },
+    "157": {
+        "ten": "Nguyễn Lê Tấn Phát",
+        "msv": "22120262",
+        "diem": 825
+    },
+    "158": {
+        "ten": "Trần Huyền Nhi",
+        "msv": "21180344",
+        "diem": "Vắng"
+    },
+    "159": {
+        "ten": "Nguyễn Thị Thảo Nguyên",
+        "msv": "21180337",
+        "diem": "Vắng"
+    },
+    "160": {
+        "ten": "Trần Ngọc Anh",
+        "msv": "21147029",
+        "diem": 900
+    },
+    "161": {
+        "ten": "Quản Vũ Hoàng Anh",
+        "msv": "21140018",
+        "diem": 350
+    },
+    "162": {
+        "ten": "Nguyễn Ngọc Bảo Hân",
+        "msv": "22147035",
+        "diem": 495
+    },
+    "201": {
+        "ten": "Lương Thục Anh",
+        "msv": "31241021733",
+        "diem": 545
+    },
+    "202": {
+        "ten": "Trần Lê Phương Quỳnh",
+        "msv": "2311115118",
+        "diem": 615
+    },
+    "203": {
+        "ten": "Nguyễn Quốc Thành",
+        "msv": "24247118",
+        "diem": 515
+    },
+    "204": {
+        "ten": "Nguyễn Hồ Minh Quang",
+        "msv": "24247113",
+        "diem": 295
+    },
+    "205": {
+        "ten": "Vắn Phú Minh",
+        "msv": "24247094",
+        "diem": 450
+    },
+    "206": {
+        "ten": "Vũ Ngọc Minh Uyên",
+        "msv": "24187088",
+        "diem": 690
+    },
+    "207": {
+        "ten": "Nguyễn Ngọc Thảo Nguyên",
+        "msv": "24187078",
+        "diem": 520
+    },
+    "208": {
+        "ten": "Trần Minh Quân",
+        "msv": "24147109",
+        "diem": 365
+    },
+    "209": {
+        "ten": "Nguyễn Trung Kiên",
+        "msv": "24147079",
+        "diem": 440
+    },
+    "210": {
+        "ten": "Trần Ngọc Bích",
+        "msv": "24147050",
+        "diem": 515
+    },
+    "211": {
+        "ten": "Đường Tuấn Đạt",
+        "msv": "24147033",
+        "diem": 295
+    },
+    "212": {
+        "ten": "Nguyễn Phan Thiên An",
+        "msv": "24147029",
+        "diem": "Vắng"
+    },
+    "213": {
+        "ten": "Trần Hữu Thịnh",
+        "msv": "24147024",
+        "diem": 295
+    },
+    "214": {
+        "ten": "Nguyễn Thiện Thọ",
+        "msv": "22147126",
+        "diem": 585
+    },
+    "215": {
+        "ten": "Trần Diệp Bảo Ngân",
+        "msv": "24147017",
+        "diem": 580
+    },
+    "216": {
+        "ten": "Trần Ngọc Hoa",
+        "msv": "24147015",
+        "diem": 545
+    },
+    "217": {
+        "ten": "Huỳnh Minh Dũng",
+        "msv": "24147014",
+        "diem": 635
+    },
+    "218": {
+        "ten": "Phạm Ngọc Bảo",
+        "msv": "24147013",
+        "diem": 775
+    },
+    "219": {
+        "ten": "Nguyễn Ngọc Anh",
+        "msv": "24147004",
+        "diem": 430
+    },
+    "220": {
+        "ten": "Phan Lê Anh",
+        "msv": "24147002",
+        "diem": 590
+    },
+    "221": {
+        "ten": "Nguyễn Thanh Sơn",
+        "msv": "24140202",
+        "diem": 450
+    },
+    "222": {
+        "ten": "Chung Bảo Nhi",
+        "msv": "24140179",
+        "diem": "Vắng"
+    },
+    "223": {
+        "ten": "Huỳnh Thiên Kim",
+        "msv": "24140145",
+        "diem": 450
+    },
+    "224": {
+        "ten": "Tô Minh Khôi",
+        "msv": "24140141",
+        "diem": 450
+    },
+    "225": {
+        "ten": "Trần Đinh Minh Huy",
+        "msv": "24140124",
+        "diem": 450
+    },
+    "226": {
+        "ten": "Lý Bảo Điền",
+        "msv": "24140092",
+        "diem": 895
+    },
+    "227": {
+        "ten": "Trần Tôn Minh Kỳ",
+        "msv": "24125102",
+        "diem": 835
+    },
+    "228": {
+        "ten": "Phương Tú Vy",
+        "msv": "23247132",
+        "diem": 475
+    },
+    "229": {
+        "ten": "Trần Thanh Hương",
+        "msv": "23247061",
+        "diem": 480
+    },
+    "230": {
+        "ten": "Trần Bảo Anh",
+        "msv": "23247038",
+        "diem": 375
+    },
+    "231": {
+        "ten": "Phan Hồ Khải Minh",
+        "msv": "23247023",
+        "diem": 440
+    },
+    "232": {
+        "ten": "Hồ Trọng Hải",
+        "msv": "23207050",
+        "diem": "Vắng"
+    },
+    "233": {
+        "ten": "Trần Minh Quân",
+        "msv": "23147129",
+        "diem": "Vắng"
+    },
+    "234": {
+        "ten": "Nguyễn Bảo Ngọc",
+        "msv": "23147093",
+        "diem": "Vắng"
+    },
+    "235": {
+        "ten": "Đoàn Khánh Linh",
+        "msv": "23147083",
+        "diem": "Vắng"
+    },
+    "236": {
+        "ten": "Nguyễn Thị Mỹ Hằng",
+        "msv": "23147066",
+        "diem": 320
+    },
+    "237": {
+        "ten": "Nguyễn Ngọc Kiều Chinh",
+        "msv": "23147054",
+        "diem": 530
+    },
+    "238": {
+        "ten": "Trần Quỳnh Hương",
+        "msv": "23147024",
+        "diem": 365
+    },
+    "239": {
+        "ten": "Phó Gia Phúc",
+        "msv": "23140175",
+        "diem": 265
+    },
+    "240": {
+        "ten": "Lê Thị Thúy Quỳnh",
+        "msv": "23130214",
+        "diem": 325
+    },
+    "241": {
+        "ten": "Mạc Minh Phúc",
+        "msv": "22280065",
+        "diem": 745
+    },
+    "242": {
+        "ten": "Lê Thành Nam",
+        "msv": "22280055",
+        "diem": 695
+    },
+    "243": {
+        "ten": "Hứa Tuấn Kiệt",
+        "msv": "22280050",
+        "diem": 660
+    },
+    "244": {
+        "ten": "Vũ Đăng Khôi",
+        "msv": "22280049",
+        "diem": 490
+    },
+    "245": {
+        "ten": "Dương Thị Hương Sơn",
+        "msv": "22247104",
+        "diem": "Vắng"
+    },
+    "246": {
+        "ten": "Ngô Chúc My",
+        "msv": "22247066",
+        "diem": "Vắng"
+    },
+    "247": {
+        "ten": "Trần Văn Được",
+        "msv": "22247024",
+        "diem": 290
+    },
+    "248": {
+        "ten": "Phạm Nguyễn Cao Triều",
+        "msv": "22207123",
+        "diem": 495
+    },
+    "249": {
+        "ten": "Nguyễn Anh Thiện",
+        "msv": "22207121",
+        "diem": 340
+    },
+    "250": {
+        "ten": "Võ Minh Chấn",
+        "msv": "22207110",
+        "diem": "Vắng"
+    },
+    "251": {
+        "ten": "Nguyễn Phúc Vĩnh",
+        "msv": "22207104",
+        "diem": 360
+    },
+    "252": {
+        "ten": "Huỳnh Thái Tuấn",
+        "msv": "22207098",
+        "diem": "Vắng"
+    },
+    "253": {
+        "ten": "Đinh Trọng Thiên",
+        "msv": "22207082",
+        "diem": "Vắng"
+    },
+    "254": {
+        "ten": "Lương Gia Hào",
+        "msv": "22207024",
+        "diem": 775
+    },
+    "255": {
+        "ten": "Lê Hiếu Ngân",
+        "msv": "22187073",
+        "diem": 480
+    },
+    "256": {
+        "ten": "Lưu Ngọc Khánh Vy",
+        "msv": "22147163",
+        "diem": 485
+    },
+    "257": {
+        "ten": "Nguyễn Minh Nhật",
+        "msv": "22140139",
+        "diem": "Vắng"
+    },
+    "258": {
+        "ten": "Mã Cát Huỳnh",
+        "msv": "22120144",
+        "diem": 725
+    },
+    "259": {
+        "ten": "Bùi Huỳnh Xuân Quyến",
+        "msv": "22110182",
+        "diem": 520
+    },
+    "260": {
+        "ten": "Lê Hoàng Phước",
+        "msv": "2304464",
+        "diem": 350
+    },
+    "261": {
+        "ten": "Hồ Nữ Thuỳ Linh",
+        "msv": "24147145",
+        "diem": 600
+    },
+    "262": {
+        "ten": "Nguyễn Anh Đạt",
+        "msv": "22147022",
+        "diem": 450
+    }
+}
