@@ -8,7 +8,7 @@ function traCuuDiem() {
     return;
   }
 
-  fetch("http://localhost:3000/api/tra-cuu", {
+  fetch("https://thithutoeic2025.id.vn/api/tra-cuu", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
