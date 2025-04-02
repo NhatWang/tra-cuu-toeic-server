@@ -16,7 +16,28 @@ diemThi = JSON.parse(rawData);
 } catch (error) {
 console.error("Lỗi khi đọc dữ liệu:", error.message);
 }
+  const path = require("path");
+// Hàm tìm file giấy chứng nhận theo SBD
+function findCertificateFile(sbd) {
+  const certDir = path.join(__dirname, "public", "certificates");
 
+  try {
+    const files = fs.readdirSync(certDir);
+    console.log("📁 Tệp có trong certificates/:", files);
+
+    const matchedFile = files.find(file =>
+      file.toLowerCase().trim() === `${sbd.toLowerCase().trim()}.pdf`
+    );
+
+    console.log("🔍 So sánh với sbd:", `${sbd}.pdf`);
+    console.log("✅ Tìm thấy:", matchedFile);
+
+    return matchedFile ? `/certificates/${matchedFile}` : null;
+  } catch (err) {
+    console.error("❌ Lỗi khi tìm file:", err.message);
+    return null;
+  }
+}
 // API tra cứu
 app.post('/api/tra-cuu', (req, res) => {
   const { sbd, msv } = req.body;
@@ -41,6 +62,9 @@ app.post('/api/tra-cuu', (req, res) => {
   const xepHang = tatCaDiem.findIndex(([key]) => key === sbd) + 1;
   const tongSoNguoi = tatCaDiem.length;
 
+  const certificatePath = thongTin.diem >= 450 ? findCertificateFile(sbd) : null;
+  console.log("📄 fileGiayChungNhan:", certificatePath);
+
   return res.json({
     success: true,
     data: {
@@ -49,17 +73,11 @@ app.post('/api/tra-cuu', (req, res) => {
       sbd: sbd,
       diem: thongTin.diem,
       xepHang: xepHang,
-      tongSoNguoi: tongSoNguoi
+      tongSoNguoi: tongSoNguoi,
+      fileGiayChungNhan: certificatePath
     }
   });
 }); // ✅ <-- thêm dòng này để đóng app.post
-
-// Khởi động server
-app.listen(PORT, () => {
-  console.log(`✅ Server đang chạy tại http://localhost:${PORT}`);
-});
-
-const path = require("path");
 
 // Phục vụ file tĩnh trong thư mục public
 app.use(express.static(path.join(__dirname, 'public')));
@@ -67,4 +85,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Route mặc định trả về index.html
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Khởi động server
+app.listen(PORT, () => {
+  console.log(`✅ Server đang chạy tại http://localhost:${PORT}`);
 });

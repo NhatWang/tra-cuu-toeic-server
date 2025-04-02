@@ -5,182 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tra Cứu Điểm Thi Thử TOEIC 2025</title>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap" rel="stylesheet">
-  <style>
-    body {
-        margin: 0;
-            font-family: Arial, sans-serif;
-            background-image: url("images/POSTER.png"); /* ảnh nền bạn muốn */
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-    }
-    /* Lớp phủ mờ toàn bộ trang */
-    body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-           backdrop-filter: blur(3px); /* chỉ làm mờ nền, không phủ màu trắng */
-            z-index: 0;
-        }
-    .container {
-        position: relative;
-            z-index: 1;
-            max-width: 600px;
-            margin: 0 auto;
-            margin-top: 20px;
-            padding: 32px 40px;
-            background-color: rgba(255, 255, 255, 0.95); /* nền sáng rõ nét */
-            border-radius: 24px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-            text-align: left;
-            flex: 0; /* đẩy footer xuống nếu nội dung ngắn */
-            font-size: 18px;
-    }
-    .container h2 {
-            text-align: center;
-            font-size: 22px;
-        }
-    .form-group {
-        margin-bottom: 18px;
-    }
-    label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 6px;
-            color: #333;
-    }
-    input {
-            width: 100%;
-            padding: 16px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            box-sizing: border-box;
-            transition: border 0.3s, box-shadow 0.3s;
-    }
-    input:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
-            outline: none;
-    }
-    button {
-            width: 100%;
-            padding: 16px;
-            font-size: 18px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-    }
-    button:hover {
-            background-color: #0056b3;
-    }
-    .logo-container {
-            position: relative;
-            z-index: 1; /* cao hơn lớp mờ */
-            display: flex; 
-            justify-content: center;
-            align-items: center;
-            gap: 70px;
-            padding-top: 20px;
-            margin-top: 0;
-            border-radius: 12px;
-        }
-
-        .logo-box {
-            text-align: center;
-            width: auto;
-        }
-
-        .logo {
-            height: 100px;
-            object-fit: contain;
-            margin-bottom: 8px;
-        }
-
-        .logo-text {
-            white-space: nowrap;       /* Không cho xuống dòng */
-            text-overflow: ellipsis; 
-        }
-    #ketQua {
-      margin-top: 20px;
-      font-size: 16px;
-    }
-    .success {
-      color: #28a745;
-      font-weight: bold;
-    }
-    .fail {
-      color: #dc3545;
-      font-weight: bold;
-    }
-    .footer {
-            position: relative;         /* đảm bảo không bị ảnh hưởng bởi lớp mờ */
-            z-index: 10;                /* cao hơn lớp nền blur */
-            text-align: center;
-            font-size: 14px;
-            color: #333;
-            padding: 20px 10px;
-            margin-top: 15px;
-            }
-/* Modal */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 999;
-  padding-top: 100px;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.4);
-}
-
-.modal-content {
-  background-color: #fefefe;
-  margin: auto;
-  padding: 24px;
-  border: 1px solid #888;
-  width: 90%;
-  max-width: 450px;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-  position: relative;
-}
-
-.close {
-  color: #aaa;
-  position: absolute;
-  right: 16px;
-  top: 10px;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.close:hover {
-  color: #000;
-}
-.success {
-  color: #28a745;
-  font-weight: bold;
-  margin-top: 12px;
-}
-.fail {
-  color: #dc3545;
-  font-weight: bold;
-  margin-top: 12px;
-}
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<!-- Loading overlay -->
+<div id="loadingOverlay">
+  <div class="loading-content">
+  <img src="images/Logo Hội Sinh Viên Việt Nam.png" alt="Logo" class="loading-logo" />
+  <div class="spinner"></div>
+  <p class="loading-text">🔄 Chào bạn! Hệ thống đang khởi động...</p>
+  </div>
+</div>
     <div class="logo-container">
         <div class="logo-box">
             <img src="images/Logo Hội Sinh Viên Việt Nam.png" alt="Logo Đơn Vị Tổ Chức" class="logo">
@@ -223,8 +58,5 @@
     <strong>© 2025 Liên chi Hội khoa Hoá học,<br>
     Trường Đại học Khoa học tự nhiên, ĐHQG-HCM</strong>
   </footer>
-      </div>
-    </div>
-  </div>
 </body>
 </html>

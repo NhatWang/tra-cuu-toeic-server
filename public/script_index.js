@@ -8,7 +8,7 @@ function traCuuDiem() {
     return;
   }
 
-  fetch("https://thithutoeic2025.id.vn/api/tra-cuu", {
+  fetch("http://localhost:3000/api/tra-cuu", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -17,8 +17,16 @@ function traCuuDiem() {
   })
     .then((res) => res.json())
     .then((data) => {
+      console.log("✅ Dữ liệu API:", data)
       if (data.success) {
-        const { ten, diem, msv, sbd, xepHang, tongSoNguoi } = data.data;
+        const { ten,
+                diem,
+                msv, 
+                sbd, 
+                xepHang, 
+                tongSoNguoi,
+                fileGiayChungNhan
+               } = data.data;
 
         let thongBao = "";
         let diemHienThi = "Vắng";
@@ -27,10 +35,24 @@ function traCuuDiem() {
         // ✅ Chỉ xử lý nếu có điểm
         if (typeof diem === "number" && !isNaN(diem)) {
           diemHienThi = diem;
-
           if (diem >= 450) {
             thongBao = `<p class="success">✅ Đủ điều kiện được cấp giấy chứng nhận</p>`;
-            // 🎉 Confetti
+          
+            // ✅ Thêm nút nếu có file nhận về từ API
+            if (fileGiayChungNhan) {
+              thongBao += `
+                <div class="btn-cert-wrapper">
+                  <a href="${fileGiayChungNhan}" target="_blank" class="btn-cert">
+                    🎓 Xem Giấy Chứng Nhận
+                  </a>
+                </div>
+              `;
+            } else {
+              // Để debug nếu không thấy file:
+              console.warn("⚠️ Không tìm thấy fileGiayChungNhan cho SBD:", sbd);
+            }
+          
+            // Confetti 🎉
             confetti({
               particleCount: 100,
               spread: 150,
@@ -83,9 +105,16 @@ window.onclick = function (event) {
     modal.style.display = "none";
   }
 };
+  // 2. Thay đổi dòng chữ loading mỗi 2 giây
+  const tips = [
+    "🔄 Đang tải dữ liệu...",
+    "📘 Hệ thống đang khởi động...",
+    "🎯 Chuẩn bị sẵn sàng tra cứu điểm...",
+    "🚀 Gần xong rồi, cảm ơn bạn đã đợi!"
+  ];
 
-// Cho phép nhấn Enter để tra cứu
 document.addEventListener("DOMContentLoaded", function () {
+  // 1. Xử lý nhấn Enter
   const sbdInput = document.getElementById("sbd");
   const msvInput = document.getElementById("msv");
 
@@ -97,4 +126,30 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
+  let index = 0;
+  const text = document.querySelector(".loading-text");
+  if (text) {
+    text.textContent = tips[0];
+    setInterval(() => {
+      index = (index + 1) % tips.length;
+      text.textContent = tips[index];
+    }, 2000);
+  }
 });
+// ======================= KHI TẢI XONG TRANG =========================
+window.addEventListener("load", function () {
+  const overlay = document.getElementById("loadingOverlay");
+  if (overlay) {
+    overlay.style.opacity = "0";
+    setTimeout(() => {
+      overlay.style.display = "none";
+    }, 600);
+  }
+
+  const container = document.querySelector(".container");
+  const logoContainer = document.querySelector(".logo-container");
+
+  if (container) container.classList.add("fade-in");
+  if (logoContainer) logoContainer.classList.add("slide-in");
+});
+  
