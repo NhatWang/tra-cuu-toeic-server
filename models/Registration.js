@@ -4,8 +4,7 @@ const registrationSchema = new mongoose.Schema({
   fullName: String,
   msv: String,
   lop: String,
-  agreed: Boolean,
-  createdAt: { type: Date, default: Date.now }
-});
+  agreed: Boolean
+}, { timestamps: true }); // ✅ Thêm dòng này
 
 module.exports = mongoose.model('Registration', registrationSchema);

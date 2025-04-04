@@ -9,9 +9,9 @@ const mongoose = require("mongoose");
 const Registration = require("./models/Registration"); // đường dẫn chính xác tới model
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
@@ -20,38 +20,24 @@ mongoose.connect(process.env.MONGO_URI, {
 
 // 2. Tạo session store với connect-mongo
 const store = MongoStore.create({
-  mongoUrl: process.env.MONGO_URI,
-  collectionName: 'sessions'
+  mongoUrl: process.env.MONGODB_URI,
+  collectionName: 'sessions',
+  ttl: 14 * 24 * 60 * 60
 });
 
 store.on('error', (err) => {
   console.error('❌ Lỗi connect-mongo:', err);
 });
 
-app.set('trust proxy', 1); // 👈 BẮT BUỘC để cookie hoạt động (kể cả localhost)
-
 app.use(session({
-  secret: 'secret-key-123',
+  secret: process.env.SESSION_SECRET || 'default-secret',
   resave: false,
   saveUninitialized: false,
-  store: store,
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 2, // 2 giờ
-    sameSite: 'lax',
-    secure: false
-  }
+  store: store
 }));
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-
-mongoose.connect('mongodb://localhost:27017/tra-cuu', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log("✅ Kết nối MongoDB thành công"))
-.catch(err => console.error("❌ Kết nối MongoDB thất bại:", err));
-
 // Middleware
 app.use(cors());
 app.use(express.json());
