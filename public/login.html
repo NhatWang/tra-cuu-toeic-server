@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <meta charset="UTF-8">
+  <title>Đăng nhập quản trị</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: url("images/POSTER.png") no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(5px);
+  z-index: 0;
+}
+
+.login-container {
+  position: relative;
+  z-index: 1;
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  box-sizing: border-box;
+  margin: 0 16px; /* 👈 giúp căn giữa khi thu nhỏ */
+}
+
+    .login-container h2 {
+      font-size: 22px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .login-container h2 i {
+      margin-right: 8px;
+      color: #007bff;
+    }
+
+    .login-container input {
+      width: 90%;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    .login-container button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .login-container button:hover {
+      background-color: #0056b3;
+    }
+
+    @media (max-width: 500px) {
+      .login-container {
+        margin: 16px;
+      }
+    }
+    .password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  width: 85%;
+  padding-right: 44px; /* để chừa chỗ cho icon 👁 */
+}
+
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: 
+  translateY(-85%);
+  cursor: pointer;
+  font-size: 20px;
+  color: #666;
+}
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+<body>
+  <form class="login-container" method="POST" action="/login">
+    <h2><i class="fa-solid fa-lock"></i> Đăng nhập quản trị</h2>
+    <input type="text" name="username" placeholder="Tên đăng nhập" required />
+    <div class="password-wrapper">
+        <input type="password" name="password" id="passwordInput" placeholder="Mật khẩu" required />
+        <i class="fa-solid fa-eye toggle-password" onclick="togglePassword()"></i>
+      </div>
+    <button type="submit">Đăng nhập</button>
+  </form>
+  <script>
+    function togglePassword() {
+    const input = document.getElementById("passwordInput");
+    const icon = document.querySelector(".toggle-password");
+    
+    if (input.type === "password") {
+      input.type = "text";
+      icon.classList.remove("fa-eye");
+      icon.classList.add("fa-eye-slash");
+    } else {
+      input.type = "password";
+      icon.classList.remove("fa-eye-slash");
+      icon.classList.add("fa-eye");
+    }
+  }
+  </script>
+</body>
+</html>

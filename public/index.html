@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div id="toast-container"></div>
 <!-- Loading overlay -->
 <div id="loadingOverlay">
   <div class="loading-content">
@@ -52,6 +53,34 @@
     <div id="modalBody">
       <!-- Nội dung kết quả sẽ được hiển thị tại đây -->
     </div>
+  </div>
+</div>
+<!-- Modal Đăng ký nhận bản cứng -->
+<div id="modalRegister" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeRegisterModal()">&times;</span>
+    <h3>ĐĂNG KÝ NHẬN GIẤY CHỨNG NHẬN BẢN CỨNG</h3>
+    <form id="registerForm">
+      <label for="ten">Họ và tên:</label><br>
+      <input type="text" name="fullName" required><br><br>
+    
+      <label for="msv">Mã số sinh viên:</label><br>
+      <input type="text" name="msv" required><br><br>
+    
+      <label for="lop">Lớp:</label><br>
+      <input type="text" name="lop" required><br><br>
+
+      <div class="checkbox-group">
+        <input type="checkbox" id="agreeCoso" name="agreeCoso" required>
+        <label for="agreeCoso">
+          Tôi muốn nhận giấy chứng nhận bản cứng tại cơ sở Nguyễn Văn Cừ.
+        </label>
+      </div>
+
+      <button type="submit">Gửi đăng ký</button>
+    </form>
+    <!-- ✅ Vị trí hiển thị thông báo -->
+  <div id="registerMessage" style="margin-top: 10px; text-align: center;"></div>
   </div>
 </div>
 <footer class="footer">
