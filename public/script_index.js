@@ -251,13 +251,20 @@ btn.textContent = "Gửi đăng ký";
 
 function showToast(message, type = "success") {
   const container = document.getElementById("toast-container");
+
   const toast = document.createElement("div");
   toast.className = `toast ${type === "error" ? "error" : ""}`;
   toast.textContent = message;
+
   container.appendChild(toast);
 
-  // Tự xóa sau 1.5s
+   // Sau 1.5s, thêm class .exit để trượt ra phải
+  setTimeout(() => {
+    toast.classList.add("exit");
+  }, 1500);
+
+  // Sau 1s, xoá khỏi DOM
   setTimeout(() => {
     toast.remove();
-  }, 1500);
+  }, 1000);
 }

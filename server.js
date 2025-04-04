@@ -4,25 +4,49 @@ const path = require("path");
 const cors = require("cors");
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
+const mongoose = require("mongoose");
+const Registration = require("./models/Registration"); // đường dẫn chính xác tới model
 
 const app = express();
+app.set('trust proxy', 1); // Cho phép cookie hoạt động đúng khi dùng secure = false
 const PORT = 3000;
+
+const store = MongoStore.create({
+  mongoUrl: 'mongodb://localhost:27017/tra-cuu',
+  collectionName: 'sessions'
+});
+
+store.on('connected', () => {
+  console.log('✅ Đã kết nối MongoDB để lưu session.');
+});
+
+store.on('error', (err) => {
+  console.error('❌ Lỗi connect-mongo:', err);
+});
+
+app.set('trust proxy', 1); // 👈 BẮT BUỘC để cookie hoạt động (kể cả localhost)
 
 app.use(session({
   secret: 'secret-key-123',
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({
-    mongoUrl: 'mongodb://localhost:27017/tra-cuu', // 🔁 hoặc MongoDB Atlas URI
-    collectionName: 'sessions'
-  }),
+  store: store,
   cookie: {
-    maxAge: 1000 * 60 * 60 * 2 // 2 giờ
+    maxAge: 1000 * 60 * 60 * 2, // 2 giờ
+    sameSite: 'lax',
+    secure: false
   }
 }));
 
 const ADMIN_USERNAME = 'lchhh';      // 🔑 Tên đăng nhập
 const ADMIN_PASSWORD = 'lienchihoihoahoc';     // 🔒 Mật khẩu đăng nhập
+
+mongoose.connect('mongodb://localhost:27017/tra-cuu', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("✅ Kết nối MongoDB thành công"))
+.catch(err => console.error("❌ Kết nối MongoDB thất bại:", err));
 
 // Middleware
 app.use(cors());
@@ -45,11 +69,24 @@ app.get('/login', (req, res) => {
 // Đăng nhập (POST)
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
+
   if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
     req.session.user = username;
-    return res.redirect('/admin.html');
+
+    // 🔁 Đợi session được lưu rồi mới redirect
+    req.session.save((err) => {
+      if (err) {
+        console.error('❌ Lỗi khi lưu session:', err);
+        return res.status(500).send("Lỗi khi lưu phiên đăng nhập.");
+      }
+
+      console.log("✅ Session sau đăng nhập:", req.session);
+      res.redirect('/admin.html');
+    });
+
+  } else {
+    res.send(`<script>alert("Sai tài khoản hoặc mật khẩu"); location.href="/login";</script>`);
   }
-  return res.send(`<script>alert("Sai tài khoản hoặc mật khẩu"); location.href="/login";</script>`);
 });
 
 // Đăng xuất
@@ -64,41 +101,22 @@ app.get('/admin.html', checkAuth, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
-// API lấy danh sách
-app.get('/api/danh-sach', checkAuth, (req, res) => {
-  const filePath = path.join(__dirname, "register-certificate.csv");
-  fs.readFile(filePath, "utf8", (err, data) => {
-    if (err) return res.status(500).json({ error: "Không thể đọc file" });
-
-    const rows = data.trim().split("\n").slice(1);
-    const parsed = rows.map(row => row.replace(/"/g, "").split(","));
-    res.json(parsed);
-  });
-});
-
 // API xoá dòng theo index
-app.delete('/api/xoa-dang-ky', (req, res) => {
-  const { index } = req.body;
-  const filePath = path.join(__dirname, "register-certificate.csv");
+app.delete('/api/xoa-dang-ky/:id', checkAuth, async (req, res) => {
+  const { id } = req.params;
 
-  fs.readFile(filePath, "utf8", (err, data) => {
-    if (err) return res.status(500).json({ error: "Không thể đọc file." });
+  try {
+    const deleted = await Registration.findByIdAndDelete(id);
 
-    const lines = data.trim().split("\n");
-    const header = lines[0];
-    const rows = lines.slice(1);
-
-    if (index < 0 || index >= rows.length) {
-      return res.status(400).json({ error: "Index không hợp lệ." });
+    if (!deleted) {
+      return res.status(404).json({ error: "Không tìm thấy đơn đăng ký." });
     }
 
-    rows.splice(index, 1); // ❌ Xoá đúng 1 dòng theo index
-    const newData = [header, ...rows].join("\n") + "\n";
-    fs.writeFile(filePath, newData, (err) => {
-      if (err) return res.status(500).json({ error: "Không thể ghi file." });
-      res.json({ success: true });
-    });
-  });
+    res.json({ success: true, message: "✅ Đã xoá thành công." });
+  } catch (err) {
+    console.error("❌ Lỗi khi xoá:", err);
+    res.status(500).json({ error: "Không thể xoá đơn đăng ký." });
+  }
 });
 
 // API tra cứu điểm
@@ -163,67 +181,38 @@ app.post('/api/tra-cuu', (req, res) => {
 });
 
 // Đăng ký nhận bản cứng
-app.post('/register-certificate', (req, res) => {
+app.post('/register-certificate', async (req, res) => {
   const { fullName, msv, lop, agreeCoso } = req.body;
-  const agreed = agreeCoso === 'on';
 
-  const row = `"${fullName}","${msv}","${lop}","${agreed ? 'Cơ sở Nguyễn Văn Cừ' : ''}","${new Date().toISOString()}"\n`;
-  const filePath = path.join(__dirname, 'register-certificate.csv');
-  const header = `"Họ và tên","MSSV","Lớp","Cơ sở nhận","Thời gian đăng ký"\n`;
-  const fullData = (!fs.existsSync(filePath) ? header : '') + row;
-  fs.appendFile(filePath, fullData, (err) => {
-    if (err) {
-      console.error("❌ Không thể lưu đăng ký:", err);
-      return res.status(500).send("⚠️ Có lỗi xảy ra khi gửi đăng ký.");
-    }
+  try {
+    await Registration.create({
+      fullName,
+      msv,
+      lop,
+      agreed: agreeCoso === 'on'
+    });
+
     res.send("✅ Cảm ơn bạn đã đăng ký!");
-  });
+  } catch (err) {
+    console.error("❌ Lỗi lưu MongoDB:", err);
+    res.status(500).send("⚠️ Có lỗi xảy ra khi gửi đăng ký.");
+  }
 });
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // ✅ để xử lý POST form
-app.use(express.static(path.join(__dirname, 'public')));
+app.get('/api/danh-sach', checkAuth, async (req, res) => {
+  const { msv, lop, fullName } = req.query;
+  const filter = {};
+  if (msv) filter.msv = msv;
+  if (lop) filter.lop = lop;
+  if (fullName) filter.fullName = { $regex: fullName, $options: 'i' };
 
-app.get("/api/danh-sach", (req, res) => {
-  const filePath = path.join(__dirname, "register-certificate.csv");
-  fs.readFile(filePath, "utf8", (err, data) => {
-    if (err) return res.status(500).json({ error: "Không thể đọc file" });
-
-    const rows = data.trim().split("\n").slice(1); // bỏ dòng tiêu đề
-    const parsed = rows.map(row => row.replace(/"/g, "").split(","));
-    res.json(parsed);
-  });
+  try {
+    const list = await Registration.find(filter).sort({ createdAt: -1 });
+    res.json(list);
+  } catch (err) {
+    res.status(500).json({ error: "Không thể tải danh sách." });
+  }
 });
-app.get("/xem-dang-ky", (req, res) => {
-  const filePath = path.join(__dirname, "register-certificate.csv");
-  fs.readFile(filePath, "utf8", (err, data) => {
-    if (err) return res.status(500).send("Không thể đọc file.");
-
-    const rows = data.trim().split("\n").map(row => row.replace(/"/g, '').split(","));
-
-    let html = `
-      <h2>Danh sách đã đăng ký nhận bản cứng</h2>
-      <table border="1" cellpadding="8" style="border-collapse: collapse;">
-        <tr>
-          <th>Họ và tên</th>
-          <th>MSSV</th>
-          <th>Lớp</th>
-          <th>CS nhận</th>
-          <th>Thời gian đăng ký</th>
-        </tr>
-    `;
-
-    for (const row of rows) {
-      html += `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`;
-    }
-
-    html += "</table>";
-    res.send(html);
-  });
-});
-
 // ------------------- Trang mặc định -------------------
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
