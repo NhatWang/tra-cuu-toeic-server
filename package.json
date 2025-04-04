@@ -7,10 +7,12 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "connect-mongo": "^4.6.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
-    "mongoose": "^6.12.3",
-    "connect-mongo": "^4.6.0"
+    "mongodb": "^4.10.0",
+    "mongoose": "^6.13.8"
   }
 }

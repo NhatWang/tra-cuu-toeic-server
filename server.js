@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
@@ -8,16 +9,19 @@ const mongoose = require("mongoose");
 const Registration = require("./models/Registration"); // đường dẫn chính xác tới model
 
 const app = express();
-app.set('trust proxy', 1); // Cho phép cookie hoạt động đúng khi dùng secure = false
 const PORT = 3000;
 
-const store = MongoStore.create({
-  mongoUrl: 'mongodb://localhost:27017/tra-cuu',
-  collectionName: 'sessions'
-});
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log("✅ Đã kết nối MongoDB"))
+.catch(err => console.error("❌ Lỗi kết nối MongoDB:", err));
 
-store.on('connected', () => {
-  console.log('✅ Đã kết nối MongoDB để lưu session.');
+// 2. Tạo session store với connect-mongo
+const store = MongoStore.create({
+  mongoUrl: process.env.MONGO_URI,
+  collectionName: 'sessions'
 });
 
 store.on('error', (err) => {
@@ -38,8 +42,8 @@ app.use(session({
   }
 }));
 
-const ADMIN_USERNAME = 'lchhh';      // 🔑 Tên đăng nhập
-const ADMIN_PASSWORD = 'lienchihoihoahoc';     // 🔒 Mật khẩu đăng nhập
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 mongoose.connect('mongodb://localhost:27017/tra-cuu', {
   useNewUrlParser: true,
