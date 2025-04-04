@@ -3,9 +3,23 @@ const fs = require("fs");
 const path = require("path");
 const cors = require("cors");
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 
 const app = express();
 const PORT = 3000;
+
+app.use(session({
+  secret: 'secret-key-123',
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: 'mongodb://localhost:27017/tra-cuu', // 🔁 hoặc MongoDB Atlas URI
+    collectionName: 'sessions'
+  }),
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 2 // 2 giờ
+  }
+}));
 
 const ADMIN_USERNAME = 'lchhh';      // 🔑 Tên đăng nhập
 const ADMIN_PASSWORD = 'lienchihoihoahoc';     // 🔒 Mật khẩu đăng nhập
@@ -15,11 +29,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({
-  secret: 'secret-key-123',
-  resave: false,
-  saveUninitialized: false
-}));
+
 
 // Middleware kiểm tra đăng nhập
 function checkAuth(req, res, next) {
