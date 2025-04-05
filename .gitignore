@@ -1,0 +1,18 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# CSV hoặc Excel chứa dữ liệu người dùng
+*.csv
+*.xlsx
+register-certificate.csv
+
+# VSCode IDE config
+.vscode/
+
+# Log, tạm thời
+*.log
+*.tmp
+*.bak
