@@ -75,6 +75,13 @@
       background-color: #007bff;
       color: white;
     }
+    select option[value="da_ky"] { color: green; font-weight: bold; }
+    select option[value="cho_ky"] { color: orange; font-weight: bold; }
+    select option[value="dang_xu_ly"] { color: gray; font-weight: bold; }
+    select option[value="dang_van_chuyen"] { color: blue; font-weight: bold; }
+    select option[value="san_sang_giao"] { color: black; font-weight: bold; }
+    select option[value="da_giao"] { color: #2b9c3f; font-weight: bold;}
+
     tr:nth-child(even) {
       background-color: #f9f9f9;
     }
@@ -210,150 +217,188 @@
   <div class="container">
     <h2>DANH SÁCH THÍ SINH ĐĂNG KÝ BẢN CỨNG</h2>
 
+    <div id="summary">Đang tải...</div>
     <div class="search-box">
       <input type="text" id="searchInput" placeholder=" Tìm theo họ tên / MSSV / lớp..." />
-      <select id="filterLop">
-        <option value="">-- Lọc theo lớp --</option>
-      </select>
-    </div>
-
-    <div id="summary">Đang tải dữ liệu...</div>
-    <div id="adminTable">Đang tải...</div>
-
-    <div class="actions">
-      <button class="btn" onclick="exportToExcel()">📤 Xuất Excel</button>
-      <button class="btn" onclick="window.print()">🖨️ In danh sách</button>
-    </div>
+        <select id="filterLop"><option value="">-- Lọc theo lớp --</option></select>
+        <select id="filterStatus">
+          <option value="">-- Lọc trạng thái --</option>
+          <option value="dang_xu_ly">⏳ Đang xử lý</option>
+          <option value="cho_ky">🖋 Chờ ký</option>
+          <option value="da_ky">✅ Đã ký xong</option>
+          <option value="dang_van_chuyen">🚚 Đang vận chuyển</option>
+          <option value="san_sang_giao">📦 Sẵn sàng giao</option>
+          <option value="da_giao">📬 Đã giao</option>
+        </select>
+  </div>
+  <div id="adminTable">Loading...</div>
+  <div class="actions">
+    <button class="btn" onclick="exportToExcel()">📤 Xuất Excel</button>
+    <button class="btn" onclick="window.print()">🖨️ In danh sách</button>
   </div>
 
   <script>
     dayjs.extend(dayjs_plugin_relativeTime);
     let rawData = [];
-
+    
+    function fetchAndRenderData() {
+      fetch("/api/danh-sach")
+        .then(res => res.json())
+        .then(data => {
+          rawData = data;
+          renderTable(rawData);
+          updateFilters(rawData);
+        });
+    }
+    function updateFilters(data) {
+      const lopSet = new Set(data.map(r => r.lop));
+      const lopSelect = document.getElementById("filterLop");
+      lopSelect.innerHTML = '<option value="">-- Lọc theo lớp --</option>';
+      [...lopSet].sort().forEach(lop => {
+        const opt = document.createElement("option");
+        opt.value = lop;
+        opt.textContent = lop;
+        lopSelect.appendChild(opt);
+      });
+    }
     function renderTable(data) {
       if (data.length === 0) {
-        document.getElementById("adminTable").innerHTML = "<p>Không có dữ liệu.</p>";
-        document.getElementById("summary").textContent = "Tổng số: 0";
+        adminTable.innerHTML = "<p>Không có dữ liệu.</p>";
+        summary.textContent = "Tổng: 0";
         return;
       }
+      // Thống kê
+      const count = data.reduce((acc, d) => {
+        acc[d.status] = (acc[d.status] || 0) + 1;
+        return acc;
+      }, {});
 
-      let html = "<table><thead><tr><th>STT</th><th>Họ tên</th><th>MSSV</th><th>Lớp</th><th>Cơ sở</th><th>Thời gian</th><th>Xoá</th></tr></thead><tbody>";
-      data.forEach((row, index) => {
-        html += `<tr>
-              <td>${index + 1}</td>
-              <td>${row.fullName}</td>
-              <td>${row.msv}</td>
-              <td>${row.lop}</td>
-              <td>${row.agreed ? "Cơ sở Nguyễn Văn Cừ" : ""}</td>
-              <td title="${dayjs(row.createdAt).format("HH:mm DD/MM/YYYY")}">
-                  ${dayjs(row.createdAt).fromNow()}
-              </td>
-              <td>
-                <button onclick="xoaDangKy('${row._id}')" style="color:red; font-weight:bold;">🗑️</button>
-</td>
+      summary.innerHTML = `
+        Tổng: ${data.length} | 
+        ⏳ ${count.dang_xu_ly || 0} - 
+        🖋 ${count.cho_ky || 0} - 
+        ✅ ${count.da_ky || 0} - 
+        🚚 ${count.dang_van_chuyen || 0} - 
+        📦 ${count.san_sang_giao || 0} -
+        📬 ${count.da_giao || 0}`;
+    
+      let html = `
+       <table><thead>
+  <tr><th>STT</th><th>Họ tên</th><th>MSSV</th><th>Lớp</th><th>CS</th><th>Thời gian tạo</th><th>Thời gian cập nhật</th><th>Trạng thái</th><th>Xoá</th></tr>
+  </thead><tbody>`;
+
+
+      data.forEach((r, i) => {
+        html += `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${r.fullName}</td>
+          <td>${r.msv}</td>
+          <td>${r.lop}</td>
+          <td>${r.agreed ? "NVC" : ""}</td>
+          <td title="${dayjs(r.createdAt).format("HH:mm DD/MM/YYYY")}">
+            ${dayjs(r.createdAt).fromNow()}
+          </td>
+          <td title="${dayjs(r.updatedAt).format("HH:mm DD/MM/YYYY")}">
+            ${dayjs(r.updatedAt).fromNow()}
+          </td>
+          <td>
+            <select onchange="capNhatTrangThai('${r._id}', this.value)">
+              <option value="dang_xu_ly" ${r.status === 'dang_xu_ly' ? 'selected' : ''}>⏳ Đang xử lý</option>
+              <option value="cho_ky" ${r.status === 'cho_ky' ? 'selected' : ''}>🖋 Chờ ký</option>
+              <option value="da_ky" ${r.status === 'da_ky' ? 'selected' : ''}>✅ Đã ký</option>
+              <option value="dang_van_chuyen" ${r.status === 'dang_van_chuyen' ? 'selected' : ''}>🚚 Đang vận chuyển</option>
+              <option value="san_sang_giao" ${r.status === 'san_sang_giao' ? 'selected' : ''}>📦Sẵn sàng giao</option>
+              <option value="da_giao" ${r.status === 'da_giao' ? 'selected' : ''}>📬 Đã giao</option>
+            </select>
+          </td>
+          <td><button onclick="xoaDangKy('${r._id}')" style="color:red;">🗑️</button></td>
         </tr>`;
       });
       html += "</tbody></table>";
       document.getElementById("adminTable").innerHTML = html;
-      document.getElementById("summary").textContent = `Tổng số đăng ký: ${data.length}`;
     }
-
+    
+    function capNhatTrangThai(id, status) {
+      fetch(`/api/cap-nhat-trang-thai/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status })
+      })
+        .then(res => res.json())
+        .then(data => {
+          showToast(data.message || "Đã cập nhật");
+          fetchAndRenderData();
+        });
+    }
+    
+    function xoaDangKy(id) {
+      if (!confirm("Bạn có chắc muốn xóa?")) return;
+      fetch(`/api/xoa-dang-ky/${id}`, { method: "DELETE" })
+        .then(res => res.json())
+        .then(data => {
+          showToast(data.message || "Đã xóa");
+          fetchAndRenderData();
+        });
+    }
+    
     function exportToExcel() {
       const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.json_to_sheet(rawData.map(row => ({
-        "Họ tên": row.fullName,
-        "MSSV": row.msv,
-        "Lớp": row.lop,
-        "Cơ sở": row.agreed ? "Cơ sở Nguyễn Văn Cừ" : "",
-        "Thời gian": dayjs(row.createdAt).format("HH:mm DD/MM/YYYY")
+      const ws = XLSX.utils.json_to_sheet(rawData.map(r => ({
+        "Họ tên": r.fullName,
+        "MSSV": r.msv,
+        "Lớp": r.lop,
+        "Cơ sở": r.agreed ? "NVC" : "",
+        "Thời gian": dayjs(r.createdAt).format("HH:mm DD/MM/YYYY"),
+        "Trạng thái": hienTrangThai(r.status)
       })));
-      XLSX.utils.book_append_sheet(wb, ws, "Đăng ký");
-      XLSX.writeFile(wb, "danhsach_dangky.xlsx");
-}
-
-    function updateFilterOptions(data) {
-      const lopSet = new Set(data.map(row => row.lop));
-      const select = document.getElementById("filterLop");
-      select.innerHTML = '<option value="">-- Lọc theo lớp --</option>';
-      [...lopSet].sort().forEach(lop => {
-        const option = document.createElement("option");
-        option.value = lop;
-        option.textContent = lop;
-        select.appendChild(option);
-      });
+      XLSX.utils.book_append_sheet(wb, ws, "Danh sách");
+      XLSX.writeFile(wb, "dang_ky_toeic.xlsx");
     }
-
-    function fetchAndRenderData() {
-  fetch("/api/danh-sach")
-    .then(res => res.json())
-    .then(data => {
-      rawData = data;
-      renderTable(rawData);
-      updateFilterOptions(rawData);
-    })
-    .catch(() => {
-      document.getElementById("adminTable").innerHTML = "<p style='color:red;'>Không thể tải danh sách.</p>";
-      document.getElementById("summary").textContent = "";
-    });
-}
-
-    document.getElementById("searchInput").addEventListener("input", function () {
-      const keyword = this.value.toLowerCase();
-      const filtered = rawData.filter(row =>
-        (row.fullName && row.fullName.toLowerCase().includes(keyword)) ||
-        (row.msv && row.msv.toLowerCase().includes(keyword)) ||
-        (row.lop && row.lop.toLowerCase().includes(keyword))
-      );
-      renderTable(filtered);
-});
-
-    document.getElementById("filterLop").addEventListener("change", function () {
-      const lop = this.value;
-      const filtered = lop ? rawData.filter(row => row.lop === lop) : rawData;
-      renderTable(filtered);
-});
-
-    // Gọi fetch lần đầu và cập nhật mỗi 5 giây
-    fetchAndRenderData();
-    setInterval(fetchAndRenderData, 5000);
-
-    function xoaDangKy(id) {
-  if (!confirm("Bạn có chắc chắn muốn xoá đơn đăng ký này?")) return;
-
-  fetch(`/api/xoa-dang-ky/${id}`, {
-    method: "DELETE"
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        showToast("✅ Đã xoá thành công!");
-        fetchAndRenderData(); // thay vì reload toàn trang
-      } else {
-        showToast("❌ Lỗi gửi đăng ký!", "error");
-      }
-    })
-    .catch(err => {
-      console.error("❌ Lỗi xóa:", err);
-      showToast("❌ Không thể xoá!");
-    });
-}
-function showToast(message, type = "success") {
-    const container = document.getElementById("toast-container");
-
-    const toast = document.createElement("div");
-    toast.className = `toast ${type === "error" ? "error" : ""}`;
-    toast.textContent = message;
     
-    container.appendChild(toast);
-    // Sau 3.5s, thêm class .exit để trượt ra phải
-    setTimeout(() => {
-    toast.classList.add("exit");
-  }, 3500);
-    // Sau 4s, xoá khỏi DOM
-  setTimeout(() => {
-    toast.remove();
-  }, 4000);
-}
-  </script>
-</body>
-</html>
+    function hienTrangThai(status) {
+      const d = {
+        dang_xu_ly: "Đang xử lý",
+        cho_ky: "Chờ ký",
+        da_ky: "Đã ký",
+        dang_van_chuyen: "Vận chuyển",
+        san_sang_giao: "Sẵn sàng giao",
+        da_giao: "Đã giao",
+      };
+      return d[status] || status;
+    }
+    
+    function showToast(msg, type = "success") {
+      const toast = document.createElement("div");
+      toast.className = `toast ${type === "error" ? "error" : ""}`;
+      toast.textContent = msg;
+      document.getElementById("toast-container").appendChild(toast);
+      setTimeout(() => toast.classList.add("exit"), 3000);
+      setTimeout(() => toast.remove(), 3500);
+    }
+    
+    document.getElementById("filterLop").addEventListener("change", filterTable);
+    document.getElementById("filterStatus").addEventListener("change", filterTable);
+    document.getElementById("searchInput").addEventListener("input", filterTable);
+    
+    function filterTable() {
+      const lop = filterLop.value;
+      const status = filterStatus.value;
+      const keyword = searchInput.value.toLowerCase();
+      const filtered = rawData.filter(r => {
+        const matchLop = lop ? r.lop === lop : true;
+        const matchStatus = status ? r.status === status : true;
+        const matchKeyword = 
+          r.fullName.toLowerCase().includes(keyword) ||
+          r.msv.toLowerCase().includes(keyword) ||
+          r.lop.toLowerCase().includes(keyword);
+        return matchLop && matchStatus && matchKeyword;
+      });
+      renderTable(filtered);
+    }
+    
+    fetchAndRenderData();
+    setInterval(fetchAndRenderData, 10000);
+    </script>
+    </body>
+    </html>

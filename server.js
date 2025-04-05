@@ -7,10 +7,15 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const mongoose = require("mongoose");
 const Registration = require("./models/Registration"); // đường dẫn chính xác tới model
+const dayjs = require('dayjs');
+
 
 const app = express();
+// 🛡 Bật trust proxy (bắt buộc khi deploy trên Render, Heroku...)
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3000;
 
+mongoose.set('strictQuery', false);
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -33,7 +38,13 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'default-secret',
   resave: false,
   saveUninitialized: false,
-  store: store
+  store: store,
+  cookie: {
+    maxAge: 14 * 24 * 60 * 60 * 1000, // 14 ngày
+    secure: process.env.NODE_ENV === 'production', // Chỉ gửi cookie qua HTTPS trong môi trường production
+    httpOnly: true, // Không cho phép JavaScript truy cập cookie
+    sameSite: 'strict' // Ngăn chặn CSRF
+  }
 }));
 
 const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
@@ -201,6 +212,53 @@ app.get('/api/danh-sach', checkAuth, async (req, res) => {
     res.json(list);
   } catch (err) {
     res.status(500).json({ error: "Không thể tải danh sách." });
+  }
+});
+
+app.post('/api/trang-thai-don', async (req, res) => {
+  const { msv } = req.body;
+
+  if (!msv) return res.status(400).json({ success: false, message: "Vui lòng nhập MSSV." });
+
+  try {
+    const don = await Registration.findOne({ msv: msv.trim() });
+    if (!don) {
+      return res.status(404).json({ success: false, message: "Không tìm thấy đơn đăng ký." });
+    }
+
+    const taodon = don.createdAt ? dayjs(don.createdAt).format("HH:mm DD/MM/YYYY") : "Không có dữ liệu";
+    const capnhat = don.updatedAt ? dayjs(don.updatedAt).format("HH:mm DD/MM/YYYY") : "Không có dữ liệu";
+    
+    res.json({ 
+      success: true,
+      status: don.status,
+      fullName: don.fullName,
+      lop: don.lop,
+      taodon: taodon,
+      capnhat: capnhat,
+ });
+  } catch (err) {
+    console.error("Lỗi khi tra trạng thái đơn:", err);
+    res.status(500).json({ success: false, message: "Lỗi máy chủ." });
+  }
+});
+
+app.put("/api/cap-nhat-trang-thai/:id", checkAuth, async (req, res) => {
+  const { status } = req.body;
+  const { id } = req.params;
+
+  const valid = ['dang_xu_ly', 'cho_ky', 'da_ky', 'dang_van_chuyen', 'san_sang_giao', 'da_giao']; ;
+  if (!valid.includes(status)) {
+    return res.status(400).json({ success: false, message: "Trạng thái không hợp lệ" });
+  }
+
+  try {
+    const updated = await Registration.findByIdAndUpdate(id, { status }, { new: true });
+    if (!updated) return res.status(404).json({ success: false, message: "Không tìm thấy đơn đăng ký" });
+
+    res.json({ success: true, message: "✅ Cập nhật thành công", data: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Lỗi máy chủ." });
   }
 });
 // ------------------- Trang mặc định -------------------

@@ -268,3 +268,113 @@ function showToast(message, type = "success") {
     toast.remove();
   }, 1000);
 }
+// ======================= TRA CỨU TRẠNG THÁI ĐƠN =========================
+// Hàm mở modal tra cứu trạng thái đơn
+  function openStatusModal() {
+    const modal = document.getElementById("modalTraCuuTrangThai");
+    if (modal) {
+      modal.style.display = "flex";
+      document.body.style.overflow = "hidden";
+    }
+  }
+  
+  function closeStatusModal() {
+    const modal = document.getElementById("modalTraCuuTrangThai");
+    if (modal) {
+      modal.style.display = "none";
+      document.body.style.overflow = "";
+    }
+  }
+
+  function hienThiTrangThai(status) {
+    const dict = {
+      dang_xu_ly: {
+        icon: "⏳",
+        text: "Đang xử lý",
+        color: "#ffc107"
+      },
+      cho_ky: {
+        icon: "🖋",
+        text: "Chờ ký",
+        color: "#fd7e14"
+      },
+      da_ky: {
+        icon: "✅",
+        text: "Đã ký xong",
+        color: "#28a745"
+      },
+      dang_van_chuyen: {
+        icon: "🚚",
+        text: "Đang vận chuyển",
+        color: "#17a2b8"
+      },
+      san_sang_giao: {
+        icon: "📦",
+        text: "Sẵn sàng để giao",
+        color: "#007bff"
+      },
+      da_giao: {
+        icon: "📬",
+        text: "Đã giao",
+        color: "#20c997"
+      }
+    };
+
+    const item = dict[status];
+    if (!item) return `<span style="color:red;">Không rõ trạng thái</span>`;
+    return `<span style="color:${item.color}; font-weight:bold;">${item.icon} ${item.text}</span>`;
+  }
+
+  function traCuuTrangThaiDon() {
+    const msv = document.getElementById("msvTraCuuTrangThai")?.value.trim();
+  
+    if (!msv) {
+      showToast("❗ Vui lòng nhập MSSV", "error");
+      return;
+    }
+  
+    openModal(`
+      <p style="color:#666;">⏳ Đang kiểm tra trạng thái đơn...</p>
+      <div class="spinner" style="margin-top:10px;"></div>
+    `);
+  
+    fetch("/api/trang-thai-don", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ msv })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.success || !data.status) {
+          openModal(`<p class="fail">❌ ${data.message || "Không tìm thấy đơn."}</p>`);
+          return;
+        }
+        const trangThai = hienThiTrangThai(data.status);
+        const hoTen = data.fullName; // ✅ Thêm dòng này trước khi dùng hoTen
+        const lop = data.lop; // Thêm dòng này nếu có trường lớp trong DB
+        const taodon = data.taodon;
+        const capnhat = data.capnhat;
+
+        openModal(`
+          <p><strong>Họ và tên:</strong> ${hoTen}</p>
+          <p><strong>Mã số sinh viên:</strong> ${msv}</p>
+          <p><strong>Lớp:</strong> ${lop}</p>
+          <p><strong>Thời gian tạo đơn:</strong> ${taodon}</p>
+          <p><strong>Thời gian cập nhật:</strong> ${capnhat}</p>
+          <p><strong>Trạng thái đơn: </strong>${trangThai}</p>
+        `);
+      })
+      .catch(err => {
+        console.error("Lỗi tra trạng thái:", err);
+        openModal(`<p class="fail">❌ Lỗi khi kiểm tra đơn.</p>`);
+      });
+  }
+  
+  // Kiểm tra xem một giá trị có phải là một ngày hợp lệ không
+  function isValidDate(date) {
+    return date && !isNaN(Date.parse(date)); // Kiểm tra nếu date không null và có thể parse thành ngày hợp lệ
+  }
+  document.addEventListener("DOMContentLoaded", function () {
+    // 🔍 Bắt sự kiện click nút tra cứu trạng thái đơn
+    document.getElementById("btnTraCuuTrangThai")?.addEventListener("click", traCuuTrangThaiDon);
+  });
