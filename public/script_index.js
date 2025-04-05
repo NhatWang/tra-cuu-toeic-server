@@ -10,7 +10,7 @@ function traCuuDiem() {
     return;
   }
 
-  fetch("http://localhost:3000/api/tra-cuu", {
+  fetch("/api/tra-cuu", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
