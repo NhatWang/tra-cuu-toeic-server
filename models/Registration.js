@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const registrationSchema = new mongoose.Schema({
   fullName: String,
@@ -7,9 +7,9 @@ const registrationSchema = new mongoose.Schema({
   agreed: Boolean,
   status: {
     type: String,
-    enum: ['dang_xu_ly', 'cho_ky', 'da_ky', 'dang_van_chuyen', 'san_sang_giao', 'da_giao' ],
+    enum: ['dang_xu_ly', 'cho_ky', 'da_ky', 'dang_van_chuyen', 'san_sang_giao', 'da_giao'],
     default: 'dang_xu_ly'
   }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Registration', registrationSchema);
+export default mongoose.model('Registration', registrationSchema);

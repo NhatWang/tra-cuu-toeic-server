@@ -114,7 +114,7 @@ button:hover {
 /* Modal */
 .modal {
 display: none;
-position: fixed;
+position: relative;
 z-index: 999;
 padding-top: 100px;
 left: 0;
@@ -442,4 +442,29 @@ to { opacity: 1; }
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+.login-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 16px;
+  text-align: center;
+  width: 100px;
+  z-index: 9999; /* Đảm bảo nút nằm trên các phần tử khác */
+  position: relative; /* Đặt vị trí cố định */
+  margin-bottom: 20px; /* Khoảng cách dưới */
+  top: 80px; /* Căn giữa theo chiều dọc */
+  left: 89%; /* Căn giữa theo chiều ngang */
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2); /* Đổ bóng cho nút */
+  transition: background-color 0.3s, transform 0.2s; /* Hiệu ứng chuyển màu và di chuyển */
+  font-weight: bold; /* Chữ đậm hơn */
+  font-family: 'Quicksand', sans-serif; /* Font chữ thân thiện */
+}
+
+/* Nút Admin khi hover */
+.login-button:hover {
+  background-color: #0056b3;
 }
