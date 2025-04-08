@@ -18,8 +18,8 @@ const PORT = process.env.PORT || 3000;
 
 // Đọc khóa riêng và chứng chỉ SSL từ file
 const options = {
-  key: fs.readFileSync('D:/Desktop/Diemthitoeic/tra-cuu-toeic-server/private-key-no-passphrase.pem'),  // Đường dẫn đến private-key.pem
-  cert: fs.readFileSync('D:/Desktop/Diemthitoeic/tra-cuu-toeic-server/certificate.pem') // Đường dẫn đến certificate.pem
+  key: fs.readFileSync('./ssl/private-key-no-passphrase.pem'),  // Đường dẫn đến private-key.pem
+  cert: fs.readFileSync('./ssl/certificate.pem') // Đường dẫn đến certificate.pem
 };
 
 // Cấu hình các route trong ứng dụng Express (ví dụ)
