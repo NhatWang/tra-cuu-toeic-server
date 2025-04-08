@@ -209,8 +209,10 @@ app.get('/api/danh-sach', checkAuth, async (req, res) => {
 
   try {
     const list = await Registration.find(filter).sort({ createdAt: -1 });
+    console.log("Danh sách đơn đăng ký:", list);
     res.json(list);
   } catch (err) {
+    console.error("❌ Lỗi khi tải danh sách:", err);
     res.status(500).json({ error: "Không thể tải danh sách." });
   }
 });
