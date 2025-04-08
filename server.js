@@ -4,7 +4,6 @@ const fs = require("fs");
 const path = require("path");
 const cors = require("cors");
 const session = require('express-session');
-const MemoryStore = require('memorystore')(session);
 const MongoStore = require('connect-mongo');
 const mongoose = require("mongoose");
 const Registration = require("./models/Registration"); // đường dẫn chính xác tới model
@@ -40,9 +39,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'default-secret',
   resave: false,
   saveUninitialized: false,
-  store: new MemoryStore({
-    checkPeriod: 86400000 // 24 giờ
-  }),
+  store: store, 
   // Sử dụng MongoDB để lưu trữ session
   cookie: {
     maxAge: null, // Thời gian sống của cookie (null = phiên làm việc)
