@@ -4,16 +4,33 @@ const fs = require("fs");
 const path = require("path");
 const cors = require("cors");
 const session = require('express-session');
+const MemoryStore = require('memorystore')(session);
 const MongoStore = require('connect-mongo');
 const mongoose = require("mongoose");
 const Registration = require("./models/Registration"); // đường dẫn chính xác tới model
 const dayjs = require('dayjs');
-
+const https = require('https');
 
 const app = express();
 // 🛡 Bật trust proxy (bắt buộc khi deploy trên Render, Heroku...)
 app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3000;
+
+// Đọc khóa riêng và chứng chỉ SSL từ file
+const options = {
+  key: fs.readFileSync('D:/Desktop/Diemthitoeic/tra-cuu-toeic-server/private-key-no-passphrase.pem'),  // Đường dẫn đến private-key.pem
+  cert: fs.readFileSync('D:/Desktop/Diemthitoeic/tra-cuu-toeic-server/certificate.pem') // Đường dẫn đến certificate.pem
+};
+
+// Cấu hình các route trong ứng dụng Express (ví dụ)
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Tạo server HTTPS
+https.createServer(options, app).listen(PORT, () => {
+  console.log('✅ Server đang chạy trên https://localhost${PORT}');
+});
 
 mongoose.set('strictQuery', false);
 mongoose.connect(process.env.MONGODB_URI, {
@@ -27,7 +44,9 @@ mongoose.connect(process.env.MONGODB_URI, {
 const store = MongoStore.create({
   mongoUrl: process.env.MONGODB_URI,
   collectionName: 'sessions',
-  ttl: 14 * 24 * 60 * 60
+  ttl: 10 * 60, // Thời gian sống của session (10 phút)
+  autoRemove: 'native', // Xoá tự động các session cũ
+  autoRemoveInterval: 10 // Xoá các session cũ mỗi 10 phút
 });
 
 store.on('error', (err) => {
@@ -38,12 +57,15 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'default-secret',
   resave: false,
   saveUninitialized: false,
-  store: store,
+  store: new MemoryStore({
+    checkPeriod: 86400000 // 24 giờ
+  }),
+  // Sử dụng MongoDB để lưu trữ session
   cookie: {
-    maxAge: 14 * 24 * 60 * 60 * 1000, // 14 ngày
-    secure: process.env.NODE_ENV === 'production', // Chỉ gửi cookie qua HTTPS trong môi trường production
+    maxAge: null, // Thời gian sống của cookie (null = phiên làm việc)
+    secure: process.env.NODE_ENV === 'production', // Sử dụng HTTPS trong môi trường production
     httpOnly: true, // Không cho phép JavaScript truy cập cookie
-    sameSite: 'strict' // Ngăn chặn CSRF
+    sameSite: 'strict', // Ngăn chặn CSRF
   }
 }));
 
@@ -58,7 +80,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Middleware kiểm tra đăng nhập
 function checkAuth(req, res, next) {
-  if (req.session.user) return next();
+  if (req.session.user) {
+    return next();
+  }
   res.redirect('/login');
 }
 
@@ -92,14 +116,21 @@ app.post('/login', (req, res) => {
 
 // Đăng xuất
 app.get('/logout', (req, res) => {
-  req.session.destroy(() => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Lỗi khi huỷ session:", err);
+    }
+    res.clearCookie('connect.sid'); // Xoá cookie phiên
+    console.log("✅ Đã đăng xuất.");
     res.redirect('/login');
   });
 });
 
 // Bảo vệ trang admin
 app.get('/admin.html', checkAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+  // Nếu đã đăng nhập, gửi trang admin.html
+  console.log("✅ Người dùng đã đăng nhập:", req.session.user);
+  res.sendFile(path.join(__dirname, 'private', 'admin.html'));
 });
 
 // API xoá dòng theo index
@@ -262,6 +293,7 @@ app.put("/api/cap-nhat-trang-thai/:id", checkAuth, async (req, res) => {
     res.status(500).json({ success: false, message: "Lỗi máy chủ." });
   }
 });
+
 // ------------------- Trang mặc định -------------------
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
