@@ -9,28 +9,11 @@ const MongoStore = require('connect-mongo');
 const mongoose = require("mongoose");
 const Registration = require("./models/Registration"); // đường dẫn chính xác tới model
 const dayjs = require('dayjs');
-const https = require('https');
 
 const app = express();
 // 🛡 Bật trust proxy (bắt buộc khi deploy trên Render, Heroku...)
 app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3000;
-
-// Đọc khóa riêng và chứng chỉ SSL từ file
-const options = {
-  key: fs.readFileSync('./ssl/private-key-no-passphrase.pem'),  // Đường dẫn đến private-key.pem
-  cert: fs.readFileSync('./ssl/certificate.pem') // Đường dẫn đến certificate.pem
-};
-
-// Cấu hình các route trong ứng dụng Express (ví dụ)
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// Tạo server HTTPS
-https.createServer(options, app).listen(PORT, () => {
-  console.log('✅ Server đang chạy trên https://localhost${PORT}');
-});
 
 mongoose.set('strictQuery', false);
 mongoose.connect(process.env.MONGODB_URI, {
