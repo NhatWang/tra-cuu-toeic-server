@@ -196,6 +196,14 @@ app.post('/api/tra-cuu', (req, res) => {
 app.post('/register-certificate', async (req, res) => {
   const { fullName, msv, lop, agreeCoso } = req.body;
 
+  // Kiểm tra xem mã số sinh viên đã đăng ký chưa
+  const existingRegistration = await Registration.findOne({ msv: msv.trim() });
+
+  if (existingRegistration) {
+    // Nếu thí sinh đã đăng ký, trả về lỗi
+    return res.status(400).send("❌ Bạn đã đăng ký nhận giấy chứng nhận bản cứng trước đó.");
+  }
+  
   try {
     await Registration.create({
       fullName,

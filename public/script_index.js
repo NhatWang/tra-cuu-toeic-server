@@ -129,6 +129,36 @@ document.addEventListener("DOMContentLoaded", function () {
   const sbdInput = document.getElementById("sbd");
   const msvInput = document.getElementById("msv");
 
+  const msvTraCuuInput = document.getElementById("msvTraCuuTrangThai");
+  const fullNameInput = document.getElementById("fullNameTraCuuTrangThai");
+  const lopInput = document.getElementById("input[name='lop']");
+
+function handleEnterKey(e, callback) {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Ngăn hành động mặc định của phím Enter
+      callback(); // Gọi hàm callback được truyền vào
+    }
+  }
+
+  [fullNameInput, msvInput, lopInput].forEach((input) => {
+    if (input) {
+      input.addEventListener("keypress", (e) => {
+        handleEnterKey(e, () => {
+          console.log("Nhấn Enter trong modal đăng ký");
+      });
+    });
+    }
+    });
+
+    if (msvTraCuuInput) {
+      msvTraCuuInput.addEventListener("keypress", (e) => {
+        handleEnterKey(e, () => {
+          console.log("Nhấn Enter trong modal tra cứu trạng thái đơn");
+          traCuuTrangThaiDon();
+        });
+      });
+    }
+
   [sbdInput, msvInput].forEach((input) => {
     input.addEventListener("keypress", function (e) {
       if (e.key === "Enter") {
@@ -178,13 +208,6 @@ function closeRegisterModal() {
     modal.style.display = "none";
   }
 }
-// Đóng nếu bấm ngoài
-window.addEventListener("click", function (e) {
-  const modal = document.getElementById("modalRegister");
-  if (e.target === modal) {
-    modal.style.display = "none";
-  }
-});
 // ======= FORM ĐĂNG KÝ NHẬN BẢN CỨNG =======
 // Lắng nghe khi DOM đã tải xong
 document.addEventListener("DOMContentLoaded", function () {
@@ -234,7 +257,13 @@ body: JSON.stringify(data)
 })
 .then(res => res.text())
 .then(message => {
-showToast(message);
+  if(message.includes("❌ Bạn đã đăng ký nhận giấy chứng nhận bản cứng trước đó.")) {
+    showToast("❌ Bạn đã đăng ký nhận giấy chứng nhận bản cứng trước đó.", "error"); 
+
+  } else {
+    showToast("✅ Cảm ơn bạn đã đăng ký!", "success");
+  }
+
 btn.disabled = false;
 btn.textContent = "Gửi đăng ký";
 
@@ -261,15 +290,15 @@ function showToast(message, type = "success") {
 
   container.appendChild(toast);
 
-   // Sau 1.5s, thêm class .exit để trượt ra phải
+   // Sau 3s, thêm class .exit để trượt ra phải
   setTimeout(() => {
     toast.classList.add("exit");
-  }, 1500);
+  }, 3000);
 
-  // Sau 1s, xoá khỏi DOM
+  // Sau 2s, xoá khỏi DOM
   setTimeout(() => {
     toast.remove();
-  }, 1000);
+  }, 2000);
 }
 // ======================= TRA CỨU TRẠNG THÁI ĐƠN =========================
 // Hàm mở modal tra cứu trạng thái đơn
