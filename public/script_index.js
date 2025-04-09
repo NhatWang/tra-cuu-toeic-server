@@ -98,21 +98,24 @@ function openModal(noiDungHTML) {
   const modal = document.getElementById("modalKetQua");
   const modalBody = document.getElementById("modalBody");
   modalBody.innerHTML = noiDungHTML;
-  modal.style.display = "block";
+  modal.style.display = "flex";
 }
 
 // Hàm đóng modal
 function closeModal() {
-  document.getElementById("modalKetQua").style.display = "none";
+  const modal = document.getElementById("modalKetQua");
+  if (modal) {
+    modal.style.display = "none";
+  }
 }
 
 // Đóng modal khi click ra ngoài
-window.onclick = function (event) {
+window.addEventListener("click", function (event) {
   const modal = document.getElementById("modalKetQua");
   if (event.target === modal) {
     modal.style.display = "none";
   }
-};
+});
   // 2. Thay đổi dòng chữ loading mỗi 2 giây
   const tips = [
     "🔄 Đang tải dữ liệu...",
