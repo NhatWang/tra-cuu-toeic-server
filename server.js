@@ -26,7 +26,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 const store = MongoStore.create({
   mongoUrl: process.env.MONGODB_URI,
   collectionName: 'sessions',
-  ttl: 10 * 60, // Thời gian sống của session (10 phút)
+  ttl: 0, // Thời gian sống của session (0 = không hết hạn)
   autoRemove: 'native', // Xoá tự động các session cũ
   autoRemoveInterval: 1 // Xoá các session cũ mỗi 1 phút
 });
@@ -45,6 +45,7 @@ app.use(session({
     secure: process.env.NODE_ENV === 'production', // Sử dụng HTTPS trong môi trường production
     httpOnly: true, // Không cho phép JavaScript truy cập cookie
     sameSite: 'strict', // Ngăn chặn CSRF
+    originalMaxAge: 0,
   }
 }));
 
