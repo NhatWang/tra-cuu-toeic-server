@@ -28,7 +28,7 @@ const store = MongoStore.create({
   collectionName: 'sessions',
   ttl: 10 * 60, // Thời gian sống của session (10 phút)
   autoRemove: 'native', // Xoá tự động các session cũ
-  autoRemoveInterval: 10 // Xoá các session cũ mỗi 10 phút
+  autoRemoveInterval: 1 // Xoá các session cũ mỗi 1 phút
 });
 
 store.on('error', (err) => {
@@ -42,7 +42,6 @@ app.use(session({
   store: store, 
   // Sử dụng MongoDB để lưu trữ session
   cookie: {
-    maxAge: null, // Thời gian sống của cookie (null = phiên làm việc)
     secure: process.env.NODE_ENV === 'production', // Sử dụng HTTPS trong môi trường production
     httpOnly: true, // Không cho phép JavaScript truy cập cookie
     sameSite: 'strict', // Ngăn chặn CSRF
@@ -203,7 +202,7 @@ app.post('/register-certificate', async (req, res) => {
     // Nếu thí sinh đã đăng ký, trả về lỗi
     return res.status(400).send("❌ Bạn đã đăng ký nhận giấy chứng nhận bản cứng trước đó.");
   }
-  
+
   try {
     await Registration.create({
       fullName,
