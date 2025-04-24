@@ -402,7 +402,7 @@ document.addEventListener("DOMContentLoaded", function () {
              <input type="time" id="timepicker" min="09:00" max="16:00" step="1800">`
           : "";
         const saveButtonHTML = showDateTimeInputs
-          ? `<button id="saveButton" class="btn btn-primary">Lưu thời gian và ngày giao</button>`
+          ? `<button id="saveButton" class="btn btn-primary">Lưu thời gian nhận</button>`
           : "";
   
         openModal(`
@@ -414,7 +414,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <p><strong>Trạng thái:</strong> ${trangThai}</p>
           ${datePickerHTML}
           ${timePickerHTML}
-          <p id="timeGiaoDisplay"><strong>Thời gian giao đã chọn:</strong> ${formattedDate} ${selectedHours}</p>
+          <p id="timeGiaoDisplay"><strong>Thời gian nhận đã chọn:</strong> ${formattedDate} ${selectedHours}</p>
           ${saveButtonHTML}
         `);
   
@@ -447,7 +447,7 @@ document.addEventListener("DOMContentLoaded", function () {
   
             const display = document.getElementById("timeGiaoDisplay");
             if (display) {
-              display.textContent = `Thời gian giao đã chọn: ${selectedHours}:${selectedMinutes} ${formattedDate}`;
+              display.textContent = `Thời gian nhận đã chọn: ${selectedHours}:${selectedMinutes} ${formattedDate}`;
             }
           });
         }
@@ -490,7 +490,7 @@ document.addEventListener("DOMContentLoaded", function () {
   
             const display = document.getElementById("timeGiaoDisplay");
             if (display) {
-              display.textContent = `Thời gian giao đã chọn: ${selectedHours}:${selectedMinutes} ${formattedDate}`;
+              display.textContent = `Thời gian nhận đã chọn: ${selectedHours}:${selectedMinutes} ${formattedDate}`;
             }
           });
         }
@@ -502,7 +502,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const selectedTime = timePicker?.value || "";
   
             if (!selectedDate || !selectedTime) {
-              showToast("❗ Vui lòng chọn cả ngày và thời gian giao.", "error");
+              showToast("❗ Vui lòng chọn đầy đủ ngày và giờ nhận.", "error");
               return;
             }
   
@@ -519,7 +519,7 @@ document.addEventListener("DOMContentLoaded", function () {
               .then((response) => response.json())
               .then((data) => {
                 if (data.success) {
-                  showToast(data.message ||"✅ Thời gian giao đã được lưu!", "success");
+                  showToast(data.message ||"✅ Thời gian nhận đã được lưu!", "success");
                   saveButton.disabled = true;
                   timeGiaoInput.disabled = true;
                   timePicker.disabled = true;
@@ -532,7 +532,7 @@ document.addEventListener("DOMContentLoaded", function () {
                       const formattedDate = `${day}/${month}/${year}`;
                       const formattedTime = data.selectedTime;
                       openModal(`
-                        <p class="fail">Bạn đã chọn thời gian: <strong>${formattedTime}</strong> ngày <strong>${formattedDate}</strong> trước đó.</p>
+                        <p class="fail">Bạn đã chọn thời gian nhận <strong>${formattedTime}</strong> ngày <strong>${formattedDate}</strong> trước đó.</p>
                         <p>Vui lòng liên hệ <strong>email</strong> hoặc <strong>fanpage Liên chi Hội Khoa Hóa học</strong> để được hỗ trợ thay đổi.</p>
                       `);
                     } else {
