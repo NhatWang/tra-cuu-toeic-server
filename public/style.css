@@ -469,3 +469,18 @@ to { opacity: 1; }
 .login-button:hover {
   background-color: #0056b3;
 }
+
+.time-slot-button {
+  padding: 10px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 80px;
+  text-align: center;
+}
+
+.time-slot-button:hover {
+  background-color: #e0e0e0;
+}

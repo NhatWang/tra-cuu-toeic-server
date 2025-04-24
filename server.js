@@ -267,7 +267,7 @@ app.put("/api/cap-nhat-trang-thai/:id", checkAuth, async (req, res) => {
   const { status } = req.body;
   const { id } = req.params;
 
-  const valid = ['dang_xu_ly', 'cho_ky', 'da_ky', 'dang_van_chuyen', 'san_sang_giao', 'da_giao']; ;
+  const valid = ['dang_xu_ly', 'cho_ky', 'da_ky', 'dang_van_chuyen', 'san_sang_nhan', 'da_nhan']; ;
   if (!valid.includes(status)) {
     return res.status(400).json({ success: false, message: "Trạng thái không hợp lệ" });
   }
@@ -279,6 +279,36 @@ app.put("/api/cap-nhat-trang-thai/:id", checkAuth, async (req, res) => {
     res.json({ success: true, message: "✅ Cập nhật thành công", data: updated });
   } catch (err) {
     res.status(500).json({ success: false, message: "Lỗi máy chủ." });
+  }
+});
+
+// API để lưu thời gian và ngày giao
+app.post('/api/cap-nhat-ngay-va-gio', async (req, res) => {
+  const { msv, date } = req.body;
+
+  if (!msv || !date) {
+    return res.status(400).json({ success: false, message: "Thiếu MSSV hoặc ngày giờ." });
+  }
+
+  try {
+    const [selectedDate, selectedTime] = date.split(" ");
+    
+    // Tìm người dùng theo MSSV
+    const registration = await Registration.findOne({ msv: msv.trim() });
+    if (!registration) {
+      return res.status(404).json({ success: false, message: "Không tìm thấy người dùng." });
+    }
+
+    // Cập nhật ngày và giờ
+    registration.selectedDate = selectedDate;
+    registration.selectedTime = selectedTime;
+
+    await registration.save();
+
+    res.json({ success: true, message: "✅ Thời gian giao đã được lưu thành công." });
+  } catch (err) {
+    console.error("❌ Lỗi lưu thời gian giao:", err);
+    res.status(500).json({ success: false, message: "Có lỗi khi lưu thời gian giao." });
   }
 });
 

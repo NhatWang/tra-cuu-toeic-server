@@ -80,8 +80,8 @@
     select option[value="cho_ky"] { color: orange; font-weight: bold; }
     select option[value="dang_xu_ly"] { color: gray; font-weight: bold; }
     select option[value="dang_van_chuyen"] { color: blue; font-weight: bold; }
-    select option[value="san_sang_giao"] { color: black; font-weight: bold; }
-    select option[value="da_giao"] { color: #2b9c3f; font-weight: bold;}
+    select option[value="san_sang_nhan"] { color: black; font-weight: bold; }
+    select option[value="da_nhan"] { color: #2b9c3f; font-weight: bold;}
 
     tr:nth-child(even) {
       background-color: #f9f9f9;
@@ -228,8 +228,8 @@
           <option value="cho_ky">🖋 Chờ ký</option>
           <option value="da_ky">✅ Đã ký xong</option>
           <option value="dang_van_chuyen">🚚 Đang vận chuyển</option>
-          <option value="san_sang_giao">📦 Sẵn sàng giao</option>
-          <option value="da_giao">📬 Đã giao</option>
+          <option value="san_sang_nhan">📦 Sẵn sàng nhận</option>
+          <option value="da_nhan">📬 Đã nhận</option>
         </select>
   </div>
   <div id="adminTable">Loading...</div>
@@ -294,15 +294,16 @@
         🖋 ${count.cho_ky || 0} - 
         ✅ ${count.da_ky || 0} - 
         🚚 ${count.dang_van_chuyen || 0} - 
-        📦 ${count.san_sang_giao || 0} - 
-        📬 ${count.da_giao || 0}`;
+        📦 ${count.san_sang_nhan || 0} - 
+        📬 ${count.da_nhan || 0}`;
 
       let html = `
         <table><thead>
-          <tr><th>STT</th><th>Họ tên</th><th>MSSV</th><th>Lớp</th><th>CS</th><th>Thời gian tạo</th><th>Thời gian cập nhật</th><th>Trạng thái</th><th>Xoá</th></tr>
+          <tr><th>STT</th><th>Họ tên</th><th>MSSV</th><th>Lớp</th><th>CS</th><th>Thời gian tạo</th><th>Thời gian cập nhật</th><th>Thời gian nhận</th><th>Trạng thái</th><th>Xoá</th></tr>
         </thead><tbody>`;
 
       data.forEach((r, i) => {
+        const thoiGianNhan = r.selectedDate && r.selectedTime ? `${r.selectedDate} ${r.selectedTime}` : '';
         html += `
           <tr>
             <td>${i + 1}</td>
@@ -316,14 +317,15 @@
             <td title="${dayjs(r.updatedAt).format("HH:mm DD/MM/YYYY")}">
               ${dayjs(r.updatedAt).fromNow()}
             </td>
+            <td>${thoiGianNhan}</td>
             <td>
               <select onchange="capNhatTrangThai('${r._id}', this.value)">
                 <option value="dang_xu_ly" ${r.status === 'dang_xu_ly' ? 'selected' : ''}>⏳ Đang xử lý</option>
                 <option value="cho_ky" ${r.status === 'cho_ky' ? 'selected' : ''}>🖋 Chờ ký</option>
                 <option value="da_ky" ${r.status === 'da_ky' ? 'selected' : ''}>✅ Đã ký</option>
                 <option value="dang_van_chuyen" ${r.status === 'dang_van_chuyen' ? 'selected' : ''}>🚚 Đang vận chuyển</option>
-                <option value="san_sang_giao" ${r.status === 'san_sang_giao' ? 'selected' : ''}>📦 Sẵn sàng giao</option>
-                <option value="da_giao" ${r.status === 'da_giao' ? 'selected' : ''}>📬 Đã giao</option>
+                <option value="san_sang_nhan" ${r.status === 'san_sang_nhan' ? 'selected' : ''}>📦 Sẵn sàng nhận</option>
+                <option value="da_nhan" ${r.status === 'da_nhan' ? 'selected' : ''}>📬 Đã nhận</option>
               </select>
             </td>
             <td><button onclick="xoaDangKy('${r._id}')" style="color:red;">🗑️</button></td>
@@ -376,9 +378,9 @@
         dang_xu_ly: "Đang xử lý",
         cho_ky: "Chờ ký",
         da_ky: "Đã ký",
-        dang_van_chuyen: "Vận chuyển",
-        san_sang_giao: "Sẵn sàng giao",
-        da_giao: "Đã giao",
+        dang_van_chuyen: "Đang vận chuyển",
+        san_sang_nhan: "Sẵn sàng nhận",
+        da_nhan: "Đã nhận",
       };
       return d[status] || status;
     }

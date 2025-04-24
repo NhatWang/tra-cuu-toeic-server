@@ -1,3 +1,26 @@
+const tips = [
+  "🔄 Đang tải dữ liệu...",
+  "📘 Hệ thống đang khởi động...",
+  "🎯 Chuẩn bị sẵn sàng tra cứu điểm...",
+  "🚀 Gần xong rồi, cảm ơn bạn đã đợi!"
+];
+
+window.addEventListener("load", function () {
+  const overlay = document.getElementById("loadingOverlay");
+  if (overlay) {
+    overlay.style.opacity = "0";
+    setTimeout(() => {
+      overlay.style.display = "none";
+    }, 600);
+  }
+
+  const container = document.querySelector(".container");
+  const logoContainer = document.querySelector(".logo-container");
+
+  if (container) container.classList.add("fade-in");
+  if (logoContainer) logoContainer.classList.add("slide-in");
+});
+
 let traCuuKetQua = null;
 
 // Hàm chính để tra cứu điểm
@@ -116,13 +139,6 @@ window.addEventListener("click", function (event) {
     modal.style.display = "none";
   }
 });
-  // 2. Thay đổi dòng chữ loading mỗi 2 giây
-  const tips = [
-    "🔄 Đang tải dữ liệu...",
-    "📘 Hệ thống đang khởi động...",
-    "🎯 Chuẩn bị sẵn sàng tra cứu điểm...",
-    "🚀 Gần xong rồi, cảm ơn bạn đã đợi!"
-  ];
 
 document.addEventListener("DOMContentLoaded", function () {
   // 1. Xử lý nhấn Enter
@@ -178,21 +194,7 @@ function handleEnterKey(e, callback) {
   }
 });
 // ======================= KHI TẢI XONG TRANG =========================
-window.addEventListener("load", function () {
-  const overlay = document.getElementById("loadingOverlay");
-  if (overlay) {
-    overlay.style.opacity = "0";
-    setTimeout(() => {
-      overlay.style.display = "none";
-    }, 600);
-  }
 
-  const container = document.querySelector(".container");
-  const logoContainer = document.querySelector(".logo-container");
-
-  if (container) container.classList.add("fade-in");
-  if (logoContainer) logoContainer.classList.add("slide-in");
-});
 
 // Mở modal đăng ký
 function openRegisterModal() {
@@ -302,6 +304,9 @@ function showToast(message, type = "success") {
 }
 // ======================= TRA CỨU TRẠNG THÁI ĐƠN =========================
 // Hàm mở modal tra cứu trạng thái đơn
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById("btnTraCuuTrangThai")?.addEventListener("click", traCuuTrangThaiDon);
+});
   function openStatusModal() {
     const modal = document.getElementById("modalTraCuuTrangThai");
     if (modal) {
@@ -340,14 +345,14 @@ function showToast(message, type = "success") {
         text: "Đang vận chuyển",
         color: "#17a2b8"
       },
-      san_sang_giao: {
+      san_sang_nhan: {
         icon: "📦",
-        text: "Sẵn sàng để giao",
+        text: "Sẵn sàng nhận",
         color: "#007bff"
       },
-      da_giao: {
+      da_nhan: {
         icon: "📬",
-        text: "Đã giao",
+        text: "Đã nhận",
         color: "#20c997"
       }
     };
@@ -356,7 +361,7 @@ function showToast(message, type = "success") {
     if (!item) return `<span style="color:red;">Không rõ trạng thái</span>`;
     return `<span style="color:${item.color}; font-weight:bold;">${item.icon} ${item.text}</span>`;
   }
-
+  
   function traCuuTrangThaiDon() {
     const msv = document.getElementById("msvTraCuuTrangThai")?.value.trim();
   
@@ -381,32 +386,150 @@ function showToast(message, type = "success") {
           openModal(`<p class="fail">❌ ${data.message || "Không tìm thấy đơn."}</p>`);
           return;
         }
+  
         const trangThai = hienThiTrangThai(data.status);
-        const hoTen = data.fullName; // ✅ Thêm dòng này trước khi dùng hoTen
-        const lop = data.lop; // Thêm dòng này nếu có trường lớp trong DB
-        const taodon = data.taodon;
-        const capnhat = data.capnhat;
-
+        const { fullName, lop, taodon, capnhat } = data;
+        let formattedDate = "Chưa chọn";
+        let selectedHours = "";
+        let selectedMinutes = "";
+  
+        const showDateTimeInputs = data.status === "san_sang_nhan";
+        const datePickerHTML = showDateTimeInputs
+          ? `<p><strong>Chọn ngày giao:</strong></p>
+             <input type="date" id="timeGiao">`
+          : "";
+        const timePickerHTML = showDateTimeInputs
+          ? `<p><strong>Chọn thời gian giao:</strong></p>
+             <input type="time" id="timepicker" min="09:00" max="16:00" step="1800">`
+          : "";
+        const saveButtonHTML = showDateTimeInputs
+          ? `<button id="saveButton" class="btn btn-primary">Lưu thời gian và ngày giao</button>`
+          : "";
+  
         openModal(`
-          <p><strong>Họ và tên:</strong> ${hoTen}</p>
+          <p><strong>Họ và tên:</strong> ${fullName}</p>
           <p><strong>Mã số sinh viên:</strong> ${msv}</p>
           <p><strong>Lớp:</strong> ${lop}</p>
           <p><strong>Thời gian tạo đơn:</strong> ${taodon}</p>
           <p><strong>Thời gian cập nhật:</strong> ${capnhat}</p>
-          <p><strong>Trạng thái đơn: </strong>${trangThai}</p>
+          <p><strong>Trạng thái:</strong> ${trangThai}</p>
+          ${datePickerHTML}
+          ${timePickerHTML}
+          <p id="timeGiaoDisplay"><strong>Thời gian giao đã chọn:</strong> ${formattedDate} ${selectedHours}</p>
+          ${saveButtonHTML}
         `);
+  
+        const timeGiaoInput = document.getElementById("timeGiao");
+        if (timeGiaoInput) {
+          const tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          const minDate = tomorrow.toISOString().split("T")[0];
+          timeGiaoInput.min = minDate;
+  
+          timeGiaoInput.addEventListener("change", function () {
+            const val = this.value;
+            if (!val) return;
+  
+            const [year, month, day] = val.split("-");
+            formattedDate = `${day}/${month}/${year}`;
+  
+            const selectedDate = new Date(val);
+            const dow = selectedDate.getDay();
+            if (dow === 0 || dow === 6) {
+              showToast("❌ Vui lòng chọn các ngày từ thứ 2 đến thứ 6.", "error");
+              this.value = "";
+              return;
+            }
+  
+            const display = document.getElementById("timeGiaoDisplay");
+            if (display) {
+              display.textContent = `Thời gian giao đã chọn: ${selectedHours}:${selectedMinutes} ${formattedDate}`;
+            }
+          });
+        }
+  
+        const timePicker = document.getElementById("timepicker");
+        if (timePicker) {
+          timePicker.addEventListener("change", () => {
+            const selectedTime = timePicker.value;
+  
+            if (!selectedTime || !selectedTime.includes(":")) {
+              showToast("❌ Thời gian không hợp lệ.", "error");
+              return;
+            }
+  
+            let [hours, minutes] = selectedTime.split(":").map(Number);
+            if (isNaN(hours) || isNaN(minutes)) return;
+  
+            if (minutes < 15) {
+              minutes = 0;
+            } else if (minutes < 45) {
+              minutes = 30;
+            } else {
+              minutes = 0;
+              hours += 1;
+            }
+  
+            if (hours < 9) {
+              hours = 9;
+              minutes = 0;
+            } else if (hours > 16) {
+              hours = 16;
+              minutes = 0;
+            }
+  
+            selectedHours = hours.toString().padStart(2, "0");
+            selectedMinutes = minutes.toString().padStart(2, "0");
+            timePicker.value = `${selectedHours}:${selectedMinutes}`;
+  
+            const display = document.getElementById("timeGiaoDisplay");
+            if (display) {
+              display.textContent = `Thời gian giao đã chọn: ${selectedHours}:${selectedMinutes} ${formattedDate}`;
+            }
+          });
+        }
+  
+        const saveButton = document.getElementById("saveButton");
+        if (saveButton) {
+          saveButton.addEventListener("click", function () {
+            const selectedDate = timeGiaoInput?.value || "";
+            const selectedTime = timePicker?.value || "";
+  
+            if (!selectedDate || !selectedTime) {
+              showToast("❗ Vui lòng chọn cả ngày và thời gian giao.", "error");
+              return;
+            }
+  
+            const combinedDateTime = `${selectedTime} ${selectedDate}`;
+  
+            fetch("/api/cap-nhat-ngay-va-gio", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                msv: msv,
+                date: combinedDateTime
+              })
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.success) {
+                  showToast("✅ Thời gian giao đã được lưu!", "success");
+                  closeStatusModal();
+                } else {
+                  showToast("❌ Có lỗi khi lưu thời gian giao!", "error");
+                }
+              })
+              .catch((err) => {
+                console.error("Lỗi khi gửi dữ liệu:", err);
+                showToast("❌ Đã xảy ra lỗi khi gửi dữ liệu.", "error");
+              });
+          });
+        }
       })
       .catch(err => {
         console.error("Lỗi tra trạng thái:", err);
         openModal(`<p class="fail">❌ Lỗi khi kiểm tra đơn.</p>`);
       });
   }
+
   
-  // Kiểm tra xem một giá trị có phải là một ngày hợp lệ không
-  function isValidDate(date) {
-    return date && !isNaN(Date.parse(date)); // Kiểm tra nếu date không null và có thể parse thành ngày hợp lệ
-  }
-  document.addEventListener("DOMContentLoaded", function () {
-    // 🔍 Bắt sự kiện click nút tra cứu trạng thái đơn
-    document.getElementById("btnTraCuuTrangThai")?.addEventListener("click", traCuuTrangThaiDon);
-  });
