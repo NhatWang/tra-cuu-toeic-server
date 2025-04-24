@@ -291,15 +291,26 @@ app.post('/api/cap-nhat-ngay-va-gio', async (req, res) => {
   }
 
   try {
-    const [selectedDate, selectedTime] = date.split(" ");
-    
+    const [selectedTime, selectedDate] = date.split(" ");
+
     // Tìm người dùng theo MSSV
     const registration = await Registration.findOne({ msv: msv.trim() });
+
     if (!registration) {
       return res.status(404).json({ success: false, message: "Không tìm thấy người dùng." });
     }
 
-    // Cập nhật ngày và giờ
+    // ✅ Nếu đã có selectedDate và selectedTime => từ chối cập nhật
+    if (registration.selectedDate && registration.selectedTime) {
+      return res.status(403).json({
+        success: false,
+        message: "❌ Bạn đã chọn thời gian trước đó. Nếu cần thay đổi, vui lòng liên hệ.",
+        selectedDate: registration.selectedDate,
+        selectedTime: registration.selectedTime
+      });
+    }
+
+    // ✅ Cập nhật ngày và giờ
     registration.selectedDate = selectedDate;
     registration.selectedTime = selectedTime;
 

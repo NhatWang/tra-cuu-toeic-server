@@ -386,9 +386,8 @@ document.addEventListener("DOMContentLoaded", function () {
           openModal(`<p class="fail">❌ ${data.message || "Không tìm thấy đơn."}</p>`);
           return;
         }
-  
+        const { fullName, lop, taodon, capnhat} = data;
         const trangThai = hienThiTrangThai(data.status);
-        const { fullName, lop, taodon, capnhat } = data;
         let formattedDate = "Chưa chọn";
         let selectedHours = "";
         let selectedMinutes = "";
@@ -429,6 +428,11 @@ document.addEventListener("DOMContentLoaded", function () {
           timeGiaoInput.addEventListener("change", function () {
             const val = this.value;
             if (!val) return;
+            if (ngayLeVN.includes(val)) {
+              showToast("❌ Đây là ngày lễ, vui lòng chọn ngày khác.", "error");
+              this.value = "";
+              return;
+            }
   
             const [year, month, day] = val.split("-");
             formattedDate = `${day}/${month}/${year}`;
@@ -471,9 +475,11 @@ document.addEventListener("DOMContentLoaded", function () {
             }
   
             if (hours < 9) {
+              showToast("❌ Chọn trong giờ hành chính (9:00 - 16:00)", "error");
               hours = 9;
               minutes = 0;
             } else if (hours > 16) {
+              showToast("❌ Chọn trong giờ hành chính (9:00 - 16:00)", "error");
               hours = 16;
               minutes = 0;
             }
@@ -513,12 +519,27 @@ document.addEventListener("DOMContentLoaded", function () {
               .then((response) => response.json())
               .then((data) => {
                 if (data.success) {
-                  showToast("✅ Thời gian giao đã được lưu!", "success");
-                  closeStatusModal();
-                } else {
-                  showToast("❌ Có lỗi khi lưu thời gian giao!", "error");
-                }
-              })
+                  showToast(data.message ||"✅ Thời gian giao đã được lưu!", "success");
+                  saveButton.disabled = true;
+                  timeGiaoInput.disabled = true;
+                  timePicker.disabled = true;
+
+                    setTimeout(closeStatusModal, 1500);
+                  } else {
+                    // ✅ Nếu đã gửi trước đó và có giờ/ngày
+                    if (data.selectedDate && data.selectedTime) {
+                      const [year, month, day] = data.selectedDate.split("-");
+                      const formattedDate = `${day}/${month}/${year}`;
+                      const formattedTime = data.selectedTime;
+                      openModal(`
+                        <p class="fail">Bạn đã chọn thời gian: <strong>${formattedTime}</strong> ngày <strong>${formattedDate}</strong> trước đó.</p>
+                        <p>Vui lòng liên hệ <strong>email</strong> hoặc <strong>fanpage Liên chi Hội Khoa Hóa học</strong> để được hỗ trợ thay đổi.</p>
+                      `);
+                    } else {
+                      openModal(`<p class="fail">${data.message || "❌ Có lỗi xảy ra."}</p>`);
+                    }
+                  }
+                })
               .catch((err) => {
                 console.error("Lỗi khi gửi dữ liệu:", err);
                 showToast("❌ Đã xảy ra lỗi khi gửi dữ liệu.", "error");
@@ -531,5 +552,13 @@ document.addEventListener("DOMContentLoaded", function () {
         openModal(`<p class="fail">❌ Lỗi khi kiểm tra đơn.</p>`);
       });
   }
-
+  const ngayLeVN = [
+    "2025-01-01",
+    "2025-01-28", "2025-01-29", "2025-01-30", "2025-01-31",
+    "2025-02-01", "2025-02-02", "2025-02-03",
+    "2025-04-08",
+    "2025-04-30",
+    "2025-05-01",
+    "2025-09-02"
+  ];
   
