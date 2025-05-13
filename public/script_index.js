@@ -1,17 +1,17 @@
 const tips = [
-  "🔄 Đang tải dữ liệu...",
-  "📘 Hệ thống đang khởi động...",
-  "🎯 Chuẩn bị sẵn sàng tra cứu điểm...",
-  "🚀 Gần xong rồi, cảm ơn bạn đã đợi!"
+  "🔄 Chào bạn! Hệ thống đang khởi động...",
+  "Đang tải dữ liệu...",
+  "Hệ thống đang khởi động...",
+  "Chuẩn bị sẵn sàng tra cứu điểm...",
+  "Gần xong rồi, cảm ơn bạn đã đợi!"
 ];
 
 window.addEventListener("load", function () {
   const overlay = document.getElementById("loadingOverlay");
   if (overlay) {
-    overlay.style.opacity = "0";
     setTimeout(() => {
       overlay.style.display = "none";
-    }, 600);
+    }, 10000);
   }
 
   const container = document.querySelector(".container");
@@ -20,6 +20,16 @@ window.addEventListener("load", function () {
   if (container) container.classList.add("fade-in");
   if (logoContainer) logoContainer.classList.add("slide-in");
 });
+
+let index = 0;
+  const text = document.querySelector(".loading-text");
+  if (text) {
+    text.textContent = tips[0];
+    setInterval(() => {
+      index = (index + 1) % tips.length;
+      text.textContent = tips[index];
+    }, 2000);
+  }
 
 let traCuuKetQua = null;
 
@@ -183,16 +193,6 @@ function handleEnterKey(e, callback) {
       }
     });
   });
-  let index = 0;
-  const text = document.querySelector(".loading-text");
-  if (text) {
-    text.textContent = tips[0];
-    setInterval(() => {
-      index = (index + 1) % tips.length;
-      text.textContent = tips[index];
-    }, 2000);
-  }
-});
 // ======================= KHI TẢI XONG TRANG =========================
 
 
@@ -366,7 +366,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const msv = document.getElementById("msvTraCuuTrangThai")?.value.trim();
   
     if (!msv) {
-      showToast("❗ Vui lòng nhập MSSV", "error");
+      showToast("❗Vui lòng nhập MSSV", "error");
       return;
     }
   
@@ -552,13 +552,13 @@ document.addEventListener("DOMContentLoaded", function () {
         openModal(`<p class="fail">❌ Lỗi khi kiểm tra đơn.</p>`);
       });
   }
-  const ngayLeVN = [
-    "2025-01-01",
-    "2025-01-28", "2025-01-29", "2025-01-30", "2025-01-31",
-    "2025-02-01", "2025-02-02", "2025-02-03",
-    "2025-04-08",
-    "2025-04-30",
-    "2025-05-01",
-    "2025-09-02"
-  ];
-  
+    const ngayLeVN = [
+      "2025-01-01",
+      "2025-01-28", "2025-01-29", "2025-01-30", "2025-01-31",
+      "2025-02-01", "2025-02-02", "2025-02-03",
+      "2025-04-08",
+      "2025-04-30",
+      "2025-05-01",
+      "2025-09-02"
+    ];
+  });
