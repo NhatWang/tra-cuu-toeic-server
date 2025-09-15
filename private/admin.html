@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quản lý đăng ký</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url("images/POSTER.png");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;;
+    }
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+       backdrop-filter: blur(3px); /* chỉ làm mờ nền, không phủ màu trắng */
+        z-index: 0;
+    }
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 16px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+    h2 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    .search-box {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    input[type="text"], select {
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      min-width: 250px;
+    }
+    #summary {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 16px;
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+    select option[value="da_ky"] { color: green; font-weight: bold; }
+    select option[value="cho_ky"] { color: orange; font-weight: bold; }
+    select option[value="dang_xu_ly"] { color: gray; font-weight: bold; }
+    select option[value="dang_van_chuyen"] { color: blue; font-weight: bold; }
+    select option[value="san_sang_nhan"] { color: black; font-weight: bold; }
+    select option[value="da_nhan"] { color: #2b9c3f; font-weight: bold;}
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .actions {
+      text-align: center;
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      background: #28a745;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn:hover {
+      background: #218838;
+    }
+    @media (max-width: 600px) {
+      table {
+        font-size: 14px;
+      }
+      input, select {
+        width: 100%;
+      }
+    }
+    @media print {
+  body {
+    background: white !important;
+  }
+
+  .search-box,
+  .actions,
+  #summary {
+    display: none !important;
+  }
+
+  .container {
+    box-shadow: none;
+    border: none;
+  }
+
+  a[href]:after {
+    content: "" !important; /* Ẩn link URL khi in */
+  }
+
+  /* Tùy chọn: ẩn footer, header trình duyệt */
+  @page {
+    margin: 20mm;
+    size: auto;
+  }
+
+  body::before,
+  body::after {
+    display: none !important;
+  }
+  button {
+    display: none !important;
+  }
+  td:last-child,
+  th:last-child {
+    display: none !important;
+  }
+    }
+  /* Ẩn header/footer mặc định của trình duyệt */
+  html, body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  #toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+}
+
+.toast {
+  background-color: #28a745;
+  color: white;
+  padding: 14px 20px;
+  margin-top: 12px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  font-size: 16px;
+  min-width: 220px;
+  animation: slideInRight 0.5s ease forwards;
+  position: relative;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.toast.exit {
+  animation: slideOutRight 0.5s ease forwards;
+}
+
+.toast.error {
+  background-color: #dc3545;
+  z-index: 1000;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+  </style>
+</head>
+<body>
+  <div id="toast-container"></div>
+  <div class="container">
+    <h2>DANH SÁCH THÍ SINH ĐĂNG KÝ BẢN CỨNG</h2>
+
+    <div id="summary">Đang tải...</div>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder=" Tìm theo họ tên / MSSV / lớp..." />
+        <select id="filterLop"><option value="">-- Lọc theo lớp --</option></select>
+        <select id="filterStatus">
+          <option value="">-- Lọc trạng thái --</option>
+          <option value="dang_xu_ly">⏳ Đang xử lý</option>
+          <option value="cho_ky">🖋 Chờ ký</option>
+          <option value="da_ky">✅ Đã ký xong</option>
+          <option value="dang_van_chuyen">🚚 Đang vận chuyển</option>
+          <option value="san_sang_nhan">📦 Sẵn sàng nhận</option>
+          <option value="da_nhan">📬 Đã nhận</option>
+        </select>
+  </div>
+  <div id="adminTable">Loading...</div>
+  <div class="actions">
+    <button class="btn" onclick="exportToExcel()">📤 Xuất Excel</button>
+    <button class="btn" onclick="window.print()">🖨️ In danh sách</button>
+  </div>
+
+  <script>
+    dayjs.extend(dayjs_plugin_relativeTime);
+    let rawData = [];
+    
+    function fetchAndRenderData() {
+      fetch("/api/danh-sach")
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+          return res.json();
+        })
+        .then(data => {
+          if (!Array.isArray(data)) {
+            throw new Error("Invalid data format: Expected an array");
+          }
+          rawData = data;
+          renderTable(rawData);
+          updateFilters(rawData);
+        })
+        .catch(err => {
+          console.error("Error fetching data:", err);
+          document.getElementById("adminTable").innerHTML = "<p>Không thể tải dữ liệu.</p>";
+          document.getElementById("summary").textContent = "Lỗi khi tải dữ liệu.";
+        });
+    }
+    function updateFilters(data) {
+      const lopSet = new Set(data.map(r => r.lop));
+      const lopSelect = document.getElementById("filterLop");
+      lopSelect.innerHTML = '<option value="">-- Lọc theo lớp --</option>';
+      [...lopSet].sort().forEach(lop => {
+        const opt = document.createElement("option");
+        opt.value = lop;
+        opt.textContent = lop;
+        lopSelect.appendChild(opt);
+      });
+    }
+    function renderTable(data) {
+      if (!Array.isArray(data) || data.length === 0) {
+        adminTable.innerHTML = "<p>Không có dữ liệu.</p>";
+        summary.textContent = "Tổng: 0";
+        return;
+      }
+
+      // Thống kê
+      const count = data.reduce((acc, d) => {
+        acc[d.status] = (acc[d.status] || 0) + 1;
+        return acc;
+      }, {});
+
+      summary.innerHTML = `
+        Tổng: ${data.length} | 
+        ⏳ ${count.dang_xu_ly || 0} - 
+        🖋 ${count.cho_ky || 0} - 
+        ✅ ${count.da_ky || 0} - 
+        🚚 ${count.dang_van_chuyen || 0} - 
+        📦 ${count.san_sang_nhan || 0} - 
+        📬 ${count.da_nhan || 0}`;
+
+      let html = `
+        <table><thead>
+          <tr><th>STT</th><th>Họ tên</th><th>MSSV</th><th>Lớp</th><th>CS</th><th>Thời gian tạo</th><th>Thời gian cập nhật</th><th>Thời gian nhận</th><th>Trạng thái</th><th>Xoá</th></tr>
+        </thead><tbody>`;
+
+      data.forEach((r, i) => {
+        const thoiGianNhan = r.selectedDate && r.selectedTime ? `${r.selectedDate} ${r.selectedTime}` : '';
+        html += `
+          <tr>
+            <td>${i + 1}</td>
+            <td>${r.fullName}</td>
+            <td>${r.msv}</td>
+            <td>${r.lop}</td>
+            <td>${r.agreed ? "NVC" : ""}</td>
+            <td title="${dayjs(r.createdAt).format("HH:mm DD/MM/YYYY")}">
+              ${dayjs(r.createdAt).fromNow()}
+            </td>
+            <td title="${dayjs(r.updatedAt).format("HH:mm DD/MM/YYYY")}">
+              ${dayjs(r.updatedAt).fromNow()}
+            </td>
+            <td>${thoiGianNhan}</td>
+            <td>
+              <select onchange="capNhatTrangThai('${r._id}', this.value)">
+                <option value="dang_xu_ly" ${r.status === 'dang_xu_ly' ? 'selected' : ''}>⏳ Đang xử lý</option>
+                <option value="cho_ky" ${r.status === 'cho_ky' ? 'selected' : ''}>🖋 Chờ ký</option>
+                <option value="da_ky" ${r.status === 'da_ky' ? 'selected' : ''}>✅ Đã ký</option>
+                <option value="dang_van_chuyen" ${r.status === 'dang_van_chuyen' ? 'selected' : ''}>🚚 Đang vận chuyển</option>
+                <option value="san_sang_nhan" ${r.status === 'san_sang_nhan' ? 'selected' : ''}>📦 Sẵn sàng nhận</option>
+                <option value="da_nhan" ${r.status === 'da_nhan' ? 'selected' : ''}>📬 Đã nhận</option>
+              </select>
+            </td>
+            <td><button onclick="xoaDangKy('${r._id}')" style="color:red;">🗑️</button></td>
+          </tr>`;
+      });
+
+      html += "</tbody></table>";
+      document.getElementById("adminTable").innerHTML = html;
+    }
+    
+    function capNhatTrangThai(id, status) {
+      fetch(`/api/cap-nhat-trang-thai/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status })
+      })
+        .then(res => res.json())
+        .then(data => {
+          showToast(data.message || "Đã cập nhật");
+          fetchAndRenderData();
+        });
+    }
+    
+    function xoaDangKy(id) {
+      if (!confirm("Bạn có chắc muốn xóa?")) return;
+      fetch(`/api/xoa-dang-ky/${id}`, { method: "DELETE" })
+        .then(res => res.json())
+        .then(data => {
+          showToast(data.message || "Đã xóa");
+          fetchAndRenderData();
+        });
+    }
+    
+    function exportToExcel() {
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(rawData.map(r => ({
+        "Họ tên": r.fullName,
+        "MSSV": r.msv,
+        "Lớp": r.lop,
+        "Cơ sở": r.agreed ? "NVC" : "",
+        "Thời gian": dayjs(r.createdAt).format("HH:mm DD/MM/YYYY"),
+        "Trạng thái": hienTrangThai(r.status)
+      })));
+      XLSX.utils.book_append_sheet(wb, ws, "Danh sách");
+      XLSX.writeFile(wb, "dang_ky_toeic.xlsx");
+    }
+    
+    function hienTrangThai(status) {
+      const d = {
+        dang_xu_ly: "Đang xử lý",
+        cho_ky: "Chờ ký",
+        da_ky: "Đã ký",
+        dang_van_chuyen: "Đang vận chuyển",
+        san_sang_nhan: "Sẵn sàng nhận",
+        da_nhan: "Đã nhận",
+      };
+      return d[status] || status;
+    }
+    
+    function showToast(msg, type = "success") {
+      const toast = document.createElement("div");
+      toast.className = `toast ${type === "error" ? "error" : ""}`;
+      toast.textContent = msg;
+      document.getElementById("toast-container").appendChild(toast);
+      setTimeout(() => toast.classList.add("exit"), 3000);
+      setTimeout(() => toast.remove(), 3500);
+    }
+    
+    document.getElementById("filterLop").addEventListener("change", filterTable);
+    document.getElementById("filterStatus").addEventListener("change", filterTable);
+    document.getElementById("searchInput").addEventListener("input", filterTable);
+    
+    function filterTable() {
+      const lop = filterLop.value;
+      const status = filterStatus.value;
+      const keyword = searchInput.value.toLowerCase();
+      const filtered = rawData.filter(r => {
+        const matchLop = lop ? r.lop === lop : true;
+        const matchStatus = status ? r.status === status : true;
+        const matchKeyword = 
+          r.fullName.toLowerCase().includes(keyword) ||
+          r.msv.toLowerCase().includes(keyword) ||
+          r.lop.toLowerCase().includes(keyword);
+        return matchLop && matchStatus && matchKeyword;
+      });
+      renderTable(filtered);
+    }
+    
+    fetchAndRenderData();
+    setInterval(fetchAndRenderData, 10000);
+    </script>
+    </body>
+    </html>

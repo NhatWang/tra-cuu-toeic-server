@@ -1,0 +1,413 @@
+body {
+    margin: 0;
+        font-family: 'Segoe UI', sans-serif;
+        background-image: url("images/POSTER.png"); /* ảnh nền bạn muốn */
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+}
+/* Lớp phủ mờ toàn bộ trang */
+body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+       backdrop-filter: blur(3px); /* chỉ làm mờ nền, không phủ màu trắng */
+        z-index: 0;
+    }
+.container {
+    position: relative;
+        z-index: 1;
+        max-width: 600px;
+        margin: 0 auto;
+        margin-top: 15px;
+        padding: 32px 40px;
+        background-color: rgba(255, 255, 255, 0.95); /* nền sáng rõ nét */
+        border-radius: 24px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        text-align: left;
+        flex: 0; /* đẩy footer xuống nếu nội dung ngắn */
+        font-size: 18px;
+}
+.container h2 {
+        text-align: center;
+        font-size: 24px;
+    }
+.form-group {
+    margin-bottom: 18px;
+}
+label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 6px;
+        color: #333;
+}
+input {
+        width: 100%;
+        padding: 16px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-sizing: border-box;
+        transition: border 0.3s, box-shadow 0.3s;
+}
+input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
+        outline: none;
+}
+select {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+  transition: border 0.3s, box-shadow 0.3s;
+}
+select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
+  outline: none;
+}
+button {
+        width: 100%;
+        padding: 16px;
+        font-size: 18px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s ease, transform 0.2s;
+}
+button:hover {
+        background-color: #0056b3;
+        transform: translateY(-1px);
+}
+.logo-container {
+        position: relative;
+        z-index: 1; /* cao hơn lớp mờ */
+        display: flex; 
+        justify-content: center;
+        align-items: center;
+        gap: 70px;
+        padding-top: 20px;
+        margin-top: 0;
+        border-radius: 12px;
+}
+.logo-box {
+        text-align: center;
+        width: auto;
+}
+.logo {
+        height: 100px;
+        object-fit: contain;
+        margin-bottom: 8px;
+}
+.logo-text {
+        white-space: nowrap;       /* Không cho xuống dòng */
+        text-overflow: ellipsis; 
+}
+
+.footer {
+    position: relative;         /* đảm bảo không bị ảnh hưởng bởi lớp mờ */
+    z-index: 10;                /* cao hơn lớp nền blur */
+    text-align: center;
+    font-size: 14px;
+    color: #333;
+    padding: 20px 10px;
+    margin-top: 15px;
+}
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 10001; /* Modal phải có z-index cao hơn các phần tử khác */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Màu nền mờ */
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+background-color: #fefefe;
+margin: auto;
+padding: 30px;
+border: 1px solid #888;
+width: 80%;
+max-width: 450px;
+border-radius: 12px;
+box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+position: relative;
+animation: fadeIn 0.4s ease-out;
+}
+@keyframes fadeIn {
+    from {opacity: 0; transform: scale(0.95);}
+    to   {opacity: 1; transform: scale(1);}
+}
+.close {
+color: #aaa;
+position: absolute;
+right: 16px;
+top: 10px;
+font-size: 28px;
+font-weight: bold;
+cursor: pointer;
+}
+.close:hover {
+color: #000;
+}
+.success {
+color: #28a745;
+font-weight: bold;
+margin-top: 12px;
+}
+.fail {
+color: #dc3545;
+font-weight: bold;
+margin-top: 12px;
+}
+/* Hiệu ứng fade-in + slide-down */
+.fade-in {
+opacity: 0;
+transform: translateY(-20px);
+animation: fadeSlideIn 1s ease forwards;
+}
+@keyframes fadeSlideIn {
+to {
+opacity: 1;
+transform: translateY(0);
+}}
+/* Tùy chọn: hiệu ứng cho logo */
+.slide-in {
+opacity: 0;
+transform: translateY(-30px);
+animation: slideIn 1s ease forwards;
+}
+@keyframes slideIn {
+to {
+opacity: 1;
+transform: translateY(0);
+}}
+/* Overlay che toàn trang */
+#loadingOverlay {
+position: fixed;
+top: 0;
+left: 0;
+height: 100%;
+width: 100%;
+background-color: #fff;
+z-index: 9999;
+display: flex;
+justify-content: center;
+align-items: center;
+flex-direction: column;
+transition: opacity 0.5s ease;
+}
+/* Nội dung trong loading */
+.loading-content {
+text-align: center;
+}
+/* Logo trong loading */
+.loading-logo {
+width: 100px;
+margin-bottom: 20px;
+animation: logoFadeIn 1s ease-in-out;
+}
+/* Spinner đẹp */
+.spinner {
+border: 6px solid #ddd;
+border-top: 6px solid #007bff;
+border-radius: 50%;
+width: 48px;
+height: 48px;
+animation: spin 1s linear infinite;
+margin: 0 auto 16px;
+}
+/* Dòng chữ thân thiện */
+.loading-text {
+font-size: 18px;
+color: #000;
+font-family: 'Quicksand', sans-serif;
+animation: fadeInText 2s ease-in;
+text-align: center;
+margin-top: 12px;
+}
+/* Animation */
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+@keyframes logoFadeIn {
+from { opacity: 0; transform: scale(0.9); }
+to { opacity: 1; transform: scale(1); }
+}
+@keyframes fadeInText {
+from { opacity: 0; }
+to { opacity: 1; }
+}
+ 
+  #toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 99999;
+  }
+  
+  .toast {
+    background-color: #28a745;
+    color: white;
+    padding: 14px 20px;
+    margin-top: 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    font-size: 16px;
+    min-width: 220px;
+    animation: slideInRight 0.5s ease forwards;
+    position: relative;
+    z-index: 99999;
+    overflow: hidden;
+  }
+  
+  .toast.exit {
+    animation: slideOutRight 0.5s ease forwards;
+  }
+  
+  .toast.error {
+    background-color: #dc3545;
+  }
+  
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideOutRight {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+  /* Overlay nền mờ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Hộp modal */
+.modal-box {
+  background-color: white;
+  padding: 30px 24px 40px;
+  border-radius: 14px;
+  width: 90%;
+  max-width: 420px;
+  position: relative;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease;
+  z-index: 10000; /* Đảm bảo nằm trên lớp mờ */
+}
+
+/* Tiêu đề */
+.modal-title {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 20px;
+  text-align: center;
+}
+
+/* Nút đóng */
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #555;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.modal-close:hover {
+  color: #000;
+}
+
+/* Nút Admin khi hover */
+.login-button:hover {
+  background-color: #0056b3;
+}
+
+#paymentSection {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 500px;
+  margin: auto;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  animation: fadeIn 0.3s ease-in;
+  z-index: 1;
+  text-align: center;
+}
+
+#paymentSection h2 {
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.qr-image {
+  max-width: 100%;
+  width: 300px;
+  height: auto;
+  display: block;
+  margin: 0 auto 15px;
+}
+
+.account-name {
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.amount-info {
+  margin-top: 10px;
+  font-weight: bold;
+  font-size: 18px;
+  color: #333;
+  text-align: center;
+}
+
+#countdownBox {
+  font-size: 18px;
+  color: #dc3545;
+  background: #fff3f3;
+  border: 1px solid #dc3545;
+  padding: 10px 16px;
+  border-radius: 8px;
+  display: inline-block;
+  margin: 16px auto;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  animation: fadeIn 0.3s ease-in;
+}

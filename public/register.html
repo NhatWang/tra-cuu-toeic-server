@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ĐĂNG KÝ THAM GIA THI THỬ TOEIC 2025</title>
+  <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style_register.css">
+</head>
+<body>
+<div id="toast-container"></div>
+
+<!-- Loading overlay -->
+<div id="loadingOverlay">
+  <div class="loading-content">
+    <img src="images/Logo Hội Sinh Viên Việt Nam.png" alt="Logo" class="loading-logo" />
+    <div class="spinner"></div>
+    <p class="loading-text"></p>
+  </div>
+</div>
+
+<!-- Logo -->
+<div class="logo-container">
+  <div class="logo-box">
+    <img src="images/Logo Hội Sinh Viên Việt Nam.png" alt="Logo Đơn Vị Tổ Chức" class="logo">
+    <div class="logo-text"><strong><h3>Liên chi Hội khoa Hoá học</h3></strong></div>
+  </div>
+  <div class="logo-box">
+    <img src="images/Logo Anh Ngữ MsHoa.png" alt="Logo Nhà Tài Trợ" class="logo">
+    <div class="logo-text"><strong><h3>Trung tâm Anh ngữ MsHoa</h3></strong></div>
+  </div>
+</div>
+
+<!-- Form Đăng ký -->
+<div id="registrationSection" class="container">
+  <h2>ĐĂNG KÝ THAM GIA THI THỬ TOEIC 2025</h2>
+  <form id="formDangKy" onsubmit="guiDangKy(event)">
+    <div class="form-group">
+      <label for="fullName">Họ và tên</label>
+      <input type="text" id="fullName" name="fullName" placeholder="Nhập họ và tên" required>
+    </div>
+    <div class="form-group">
+      <label for="msv">Mã số sinh viên</label>
+      <input type="text" id="msv" name="msv" placeholder="Nhập MSSV" required>
+    </div>
+    <div class="form-group">
+      <label for="sdt">Số điện thoại</label>
+      <input type="tel" id="sdt" name="sdt" placeholder="Nhập số điện thoại" required>
+    </div>
+    <div class="form-group">
+      <label for="email">Email liên hệ</label>
+      <input type="email" id="email" name="email" placeholder="Nhập email" required>
+    </div>
+    <div class="form-group">
+      <label for="truong">Bạn đến từ trường nào?</label>
+      <select id="truong" name="truong" onchange="handleTruongChange()" required>
+      <option disabled selected value="">-- Chọn trường --</option>
+      <option value="ĐHKHTN">Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM</option>
+      <option value="Khac">Khác</option>
+    </select>
+    <input type="text" id="truongKhac" name="truongKhac" placeholder="Nhập tên trường khác" style="display: none; margin-top: 10px;">
+    </div>
+    <div class="form-group">
+        <label for="khoa">Bạn đến từ khoa nào?</label>
+        <select id="khoa" name="khoa" onchange="handleKhoaChange()" required>
+            <option disabled selected value="">-- Chọn khoa --</option>
+            <option value="CNTT">Khoa Công nghệ thông tin</option>
+            <option value="ToanTin">Khoa Toán - Tin học</option>
+            <option value="Hoa">Khoa Hóa Học</option>
+            <option value="Sinh">Khoa Sinh học - Công nghệ sinh học</option>
+            <option value="DiaChat">Khoa Địa chất</option>
+            <option value="MoiTruong">Khoa Môi trường</option>
+            <option value="DTVT">Khoa Điện tử - Viễn thông</option>
+            <option value="VLVLKT">Khoa Vật lý - Vật lý Kỹ thuật</option>
+            <option value="KHCNVL">Khoa Khoa học và Công nghệ vật liệu</option>
+            <option value="Khac">Khác</option>
+        </select>
+        <input type="text" id="khoakhac" name="khoakhac" placeholder="Nhập tên khoa khác" style="display: none; margin-top: 10px">
+    </div>
+    <div class="form-group">
+        <label for="nganh">Ngành học</label>
+        <input type="text" id="nganh" name="nganh" placeholder="Nhập ngành học" required>
+    </div>
+     <div class="form-group">
+        <label for="namhoc">Bạn là sinh viên năm mấy?</label>
+        <select id="namhoc" name="namhoc" required>
+            <option disabled selected value="">-- Chọn năm học --</option>
+            <option value="1">Năm 1</option>
+            <option value="2">Năm 2</option>
+            <option value="3">Năm 3</option>
+            <option value="4">Năm 4</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="cathi">Chọn ca thi</label>
+        <select id="cathi" name="cathi" required>
+            <option disabled selected value="">-- Chọn ca thi --</option>
+            <option value="Ca 1">Ca 1: 09:00 - 11:00</option>
+            <option value="Ca 2">Ca 2: 14:00 - 16:00</option>
+        </select>
+    </div>
+    <button type="button" id="nextBtn">Tiếp tục</button>
+  </form>
+</div>
+<div id="paymentSection" class="container" style="display: none;">
+  <h2>THANH TOÁN</h2>
+
+  <!-- Countdown -->
+  <div id="countdownBox">
+    ⏳ Vui lòng thanh toán trong <span id="countdown">10:00</span> phút <br>
+    <span id="expireTimeText" style="font-size: 0.9em; font-weight: normal;"></span>
+  </div>
+
+  <!-- QR code -->
+  <div class="qr-display payment-method" id="bankTransferSection">
+  <img id="bankQRImg" src="" alt="QR chuyển khoản ngân hàng" class="qr-image">
+  <div class="account-name"><strong>NGUYEN NHAT QUANG</strong></div>
+  <div id="paymentAmountDisplay" class="amount-info"></div>
+</div>
+</div>
+
+<!-- Link Admin -->
+<a href="login.html" class="login-button">Admin</a>
+
+<!-- Footer -->
+<footer class="footer">
+  <strong>© 2025 Liên chi Hội khoa Hoá học,<br>
+  Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM</strong>
+</footer>
+
+<!-- Script -->
+<script src="script_register.js"></script>
+</body>
+</html>

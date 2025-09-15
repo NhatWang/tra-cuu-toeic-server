@@ -1,0 +1,27 @@
+{
+  "name": "tra-cuu-toeic",
+  "version": "1.0.0",
+  "description": "Hệ thống tra cứu & đăng ký nhận bản cứng",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@simplewebauthn/browser": "^13.1.0",
+    "@simplewebauthn/server": "^13.1.1",
+    "connect-mongo": "^4.6.0",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.13",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "express-session": "^1.17.3",
+    "fs": "^0.0.1-security",
+    "helmet": "^8.1.0",
+    "https": "^1.0.0",
+    "memorystore": "^1.6.7",
+    "mongodb": "^4.10.0",
+    "mongoose": "^6.13.8",
+    "socket.io": "^4.8.1"
+  }
+}
