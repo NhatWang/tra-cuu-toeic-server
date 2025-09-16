@@ -373,6 +373,33 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!item) return `<span style="color:red;">Không rõ trạng thái</span>`;
     return `<span style="color:${item.color}; font-weight:bold;">${item.icon} ${item.text}</span>`;
   }
+
+  function guiPhucKhao(sbd, msv) {
+  const email = prompt("📩 Nhập email để BTC liên hệ phản hồi:");
+
+  if (!email) {
+    showToast("⚠️ Bạn cần nhập email để gửi phúc khảo.", "error");
+    return;
+  }
+
+  fetch("/api/phuc-khao", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sbd, msv, email })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        showToast("✅ Yêu cầu phúc khảo đã được gửi!", "success");
+      } else {
+        showToast("❌ " + data.message, "error");
+      }
+    })
+    .catch(err => {
+      console.error("Lỗi:", err);
+      showToast("⚠️ Có lỗi khi gửi yêu cầu phúc khảo.", "error");
+    });
+}
   
   function traCuuTrangThaiDon() {
     const msv = document.getElementById("msvTraCuuTrangThai")?.value.trim();
@@ -575,29 +602,3 @@ document.addEventListener("DOMContentLoaded", function () {
     ];
   });
 
-function guiPhucKhao(sbd, msv) {
-  const email = prompt("📩 Nhập email để BTC liên hệ phản hồi:");
-
-  if (!email) {
-    showToast("⚠️ Bạn cần nhập email để gửi phúc khảo.", "error");
-    return;
-  }
-
-  fetch("/api/phuc-khao", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ sbd, msv, email })
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        showToast("✅ Yêu cầu phúc khảo đã được gửi!", "success");
-      } else {
-        showToast("❌ " + data.message, "error");
-      }
-    })
-    .catch(err => {
-      console.error("Lỗi:", err);
-      showToast("⚠️ Có lỗi khi gửi yêu cầu phúc khảo.", "error");
-    });
-}
