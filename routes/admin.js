@@ -10,7 +10,7 @@ function checkAuth(req, res, next) {
   res.redirect("/login");
 }
 
-router.get("/admin.html", checkAuth, (req, res) => {
+router.get("/admin", checkAuth, (req, res) => {
   res.sendFile(path.join(__dirname, "..", "private", "admin.html"));
 });
 
