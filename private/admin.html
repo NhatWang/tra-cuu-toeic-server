@@ -104,16 +104,18 @@
     <div id="section-phuckhao" class="hidden">
       <h2>DANH SÁCH YÊU CẦU PHÚC KHẢO</h2>
       <div id="phucKhaoTable">Loading...</div>
-      <select onchange="capNhatTrangThaiPhucKhao('${r._id}', this.value)">
-        <option value="dang_xu_ly" ${r.status==="dang_xu_ly"?"selected":""}>⏳ Đang xử lý</option>
-        <option value="da_xem" ${r.status==="da_xem"?"selected":""}>👀 Đã xem</option>
-        <option value="da_phan_hoi" ${r.status==="da_phan_hoi"?"selected":""}>✅ Đã phản hồi</option>
-      </select>
     </div>
   </div>
 
   <script>
     dayjs.extend(dayjs_plugin_relativeTime);
+    // Tham chiếu DOM an toàn, không dựa vào global by-id
+    const summaryEl = document.getElementById("summary");
+    const adminTableEl = document.getElementById("adminTable");
+    const phucKhaoTableEl = document.getElementById("phucKhaoTable");
+    const searchInputEl = document.getElementById("searchInput");
+    const filterLopEl = document.getElementById("filterLop");
+    const filterStatusEl = document.getElementById("filterStatus");
     let rawData = [];
 
     // Chuyển tab
@@ -132,47 +134,64 @@
 
     // ====== Đăng ký bản cứng ======
     function fetchAndRenderData() {
-      fetch("/api/danh-sach")
-        .then(res => res.json())
-        .then(data => {
-          rawData = data;
-          renderTable(rawData);
-          updateFilters(rawData);
-        })
-        .catch(() => {
-          document.getElementById("adminTable").innerHTML = "<p>Lỗi tải dữ liệu</p>";
-        });
-    }
-    function updateFilters(data) {
-      const lopSet = new Set(data.map(r => r.lop));
-      const lopSelect = document.getElementById("filterLop");
-      lopSelect.innerHTML = '<option value="">-- Lọc theo lớp --</option>';
-      [...lopSet].sort().forEach(lop => {
-        const opt = document.createElement("option");
-        opt.value = lop; opt.textContent = lop; lopSelect.appendChild(opt);
-      });
-    }
-    function renderTable(data) {
-      if (!data.length) {
-        adminTable.innerHTML = "<p>Không có dữ liệu.</p>";
-        summary.textContent = "Tổng: 0"; return;
-      }
-      const count = data.reduce((acc, d) => { acc[d.status] = (acc[d.status]||0)+1; return acc; }, {});
-      summary.innerHTML = `Tổng: ${data.length} | ⏳ ${count.dang_xu_ly||0} - 🖋 ${count.cho_ky||0} - ✅ ${count.da_ky||0} - 🚚 ${count.dang_van_chuyen||0} - 📦 ${count.san_sang_nhan||0} - 📬 ${count.da_nhan||0}`;
-      let html = `<table><thead><tr><th>STT</th><th>Họ tên</th><th>MSSV</th><th>Lớp</th><th>Trạng thái</th></tr></thead><tbody>`;
-      data.forEach((r,i)=>{ html += `<tr><td>${i+1}</td><td>${r.fullName}</td><td>${r.msv}</td><td>${r.lop}</td><td>${r.status}</td></tr>`; });
-      html += "</tbody></table>"; adminTable.innerHTML = html;
-    }
-    function exportToExcel() {
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.json_to_sheet(rawData.map(r => ({
-        "Họ tên": r.fullName, "MSSV": r.msv, "Lớp": r.lop,
-        "Trạng thái": r.status
-      })));
-      XLSX.utils.book_append_sheet(wb, ws, "Danh sách");
-      XLSX.writeFile(wb, "dang_ky_toeic.xlsx");
-    }
+  fetch("/api/danh-sach")
+    .then(res => res.json())
+    .then(data => {
+      rawData = Array.isArray(data) ? data : [];
+      renderTable(rawData);
+      updateFilters(rawData);
+    })
+    .catch(() => {
+      adminTableEl.innerHTML = "<p>Lỗi tải dữ liệu</p>";
+      summaryEl.textContent = "Tổng: 0";
+    });
+}
 
+function updateFilters(data) {
+  const lopSet = new Set(data.map(r => r.lop).filter(Boolean));
+  filterLopEl.innerHTML = '<option value="">-- Lọc theo lớp --</option>';
+  [...lopSet].sort().forEach(lop => {
+    const opt = document.createElement("option");
+    opt.value = lop; opt.textContent = lop;
+    filterLopEl.appendChild(opt);
+  });
+}
+
+function renderTable(data) {
+  if (!data.length) {
+    adminTableEl.innerHTML = "<p>Không có dữ liệu.</p>";
+    summaryEl.textContent = "Tổng: 0";
+    return;
+  }
+  const count = data.reduce((acc, d) => {
+    acc[d.status] = (acc[d.status] || 0) + 1; return acc;
+  }, {});
+  summaryEl.innerHTML =
+    `Tổng: ${data.length} | ⏳ ${count.dang_xu_ly||0} - 🖋 ${count.cho_ky||0} - ✅ ${count.da_ky||0} - 🚚 ${count.dang_van_chuyen||0} - 📦 ${count.san_sang_nhan||0} - 📬 ${count.da_nhan||0}`;
+
+  let html = `<table><thead><tr>
+    <th>STT</th><th>Họ tên</th><th>MSSV</th><th>Lớp</th><th>Trạng thái</th>
+  </tr></thead><tbody>`;
+  data.forEach((r,i)=> {
+    html += `<tr>
+      <td>${i+1}</td><td>${r.fullName||""}</td><td>${r.msv||""}</td>
+      <td>${r.lop||""}</td><td>${r.status||""}</td>
+    </tr>`;
+  });
+  html += "</tbody></table>";
+  adminTableEl.innerHTML = html;
+}
+
+function exportToExcel() {
+  if (!rawData.length) { showToast("Không có dữ liệu để xuất", "error"); return; }
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.json_to_sheet(rawData.map(r => ({
+    "Họ tên": r.fullName || "", "MSSV": r.msv || "", "Lớp": r.lop || "",
+    "Trạng thái": r.status || ""
+  })));
+  XLSX.utils.book_append_sheet(wb, ws, "Danh sách");
+  XLSX.writeFile(wb, "dang_ky_toeic.xlsx");
+}
     // ====== Phúc khảo ======
     function fetchPhucKhao() {
       fetch("/api/admin/phuc-khao")
@@ -183,27 +202,29 @@
         });
     }
     function renderPhucKhao(list) {
-      if (!list.length) { phucKhaoTable.innerHTML = "<p>Chưa có yêu cầu phúc khảo</p>"; return; }
-      let html = `<table><thead><tr><th>STT</th><th>SBD</th><th>MSSV</th><th>Email</th><th>Thời gian</th><th>Trạng thái</th></tr></thead><tbody>`;
-      list.forEach((r,i)=>{
-        html += `<tr>
-          <td>${i+1}</td>
-          <td>${r.sbd}</td>
-          <td>${r.msv}</td>
-          <td>${r.email}</td>
-          <td>${dayjs(r.time).format("HH:mm DD/MM/YYYY")}</td>
-          <td>
-            <select onchange="capNhatTrangThaiPhucKhao('${r._id}', this.value)">
-              <option value="dang_xu_ly" ${r.status==="dang_xu_ly"?"selected":""}>⏳ Đang xử lý</option>
-              <option value="da_xem" ${r.status==="da_xem"?"selected":""}>👀 Đã xem</option>
-              <option value="da_giai_quyet" ${r.status==="da_giai_quyet"?"selected":""}>✅ Đã giải quyết</option>
-            </select>
-          </td>
-        </tr>`;
-      });
-      html += "</tbody></table>";
-      phucKhaoTable.innerHTML = html;
-    }
+  if (!list.length) { phucKhaoTableEl.innerHTML = "<p>Chưa có yêu cầu phúc khảo</p>"; return; }
+  let html = `<table><thead><tr>
+      <th>STT</th><th>SBD</th><th>MSSV</th><th>Email</th><th>Thời gian</th><th>Trạng thái</th>
+    </tr></thead><tbody>`;
+  list.forEach((r,i)=> {
+    html += `<tr>
+      <td>${i+1}</td>
+      <td>${r.sbd||""}</td>
+      <td>${r.msv||""}</td>
+      <td>${r.email||""}</td>
+      <td>${r.time ? dayjs(r.time).format("HH:mm DD/MM/YYYY") : ""}</td>
+      <td>
+        <select onchange="capNhatTrangThaiPhucKhao('${r._id}', this.value)">
+          <option value="dang_xu_ly" ${r.status==="dang_xu_ly"?"selected":""}>⏳ Đang xử lý</option>
+          <option value="da_xem" ${r.status==="da_xem"?"selected":""}>👀 Đã xem</option>
+          <option value="da_giai_quyet" ${r.status==="da_giai_quyet"?"selected":""}>✅ Đã giải quyết</option>
+        </select>
+      </td>
+    </tr>`;
+  });
+  html += "</tbody></table>";
+  phucKhaoTableEl.innerHTML = html;
+}
 
     function capNhatTrangThaiPhucKhao(id, status) {
       fetch(`/api/admin/phuc-khao/${id}`, {
