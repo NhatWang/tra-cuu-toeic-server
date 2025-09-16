@@ -6,7 +6,7 @@ const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 router.get("/login", (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "public", "login"));
+  res.sendFile(path.join(__dirname, "..", "public", "login.html"));
 });
 
 router.post("/login", (req, res) => {
