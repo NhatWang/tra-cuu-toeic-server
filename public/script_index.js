@@ -400,6 +400,7 @@ document.addEventListener("DOMContentLoaded", function () {
       showToast("⚠️ Có lỗi khi gửi yêu cầu phúc khảo.", "error");
     });
 }
+window.guiPhucKhao = guiPhucKhao;
   
   function traCuuTrangThaiDon() {
     const msv = document.getElementById("msvTraCuuTrangThai")?.value.trim();
