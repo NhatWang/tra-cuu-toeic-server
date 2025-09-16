@@ -221,6 +221,7 @@ function closeRegisterModal() {
 }
 window.openRegisterModal = openRegisterModal;
 window.closeRegisterModal = closeRegisterModal;
+
 // ======= FORM ĐĂNG KÝ NHẬN BẢN CỨNG =======
 // Lắng nghe khi DOM đã tải xong
 document.addEventListener("DOMContentLoaded", function () {

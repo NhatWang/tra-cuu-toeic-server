@@ -15,6 +15,10 @@ router.get("/admin", checkAuth, (req, res) => {
   res.sendFile(path.join(__dirname, "..", "private", "admin.html"));
 });
 
+router.get("/login", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "public", "login.html"));
+});
+
 router.get("/api/danh-sach", checkAuth, async (req, res) => {
   const { msv, lop, fullName } = req.query;
   const filter = {};
