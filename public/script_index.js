@@ -80,6 +80,9 @@ function traCuuDiem() {
                   <a href="${fileGiayChungNhan}" target="_blank" class="btn-cert">
                     🎓 Xem Giấy Chứng Nhận
                   </a>
+                  <button onclick="guiPhucKhao('${sbd}','${msv}')" class="btn-cert" style="background-color:#dc3545; margin-left: 12px;">
+                    📩 Phúc khảo
+                  </button>
                   <button onclick="openRegisterModal()" class="btn-cert" style="background-color: #ffc107; margin-left: 12px;">
                     ✉️ Nhận bản cứng
                   </button>
@@ -97,8 +100,14 @@ function traCuuDiem() {
               origin: { y: 0.6 }
             });
           } else {
-            thongBao = `<p class="fail">📘 Bạn hãy cố gắng ôn tập nhé!</p>`;
-          }
+            thongBao = `<p class="fail">📘 Bạn hãy cố gắng ôn tập nhé!</p>
+            <div class="btn-cert-wrapper">
+              <button onclick="guiPhucKhao('${sbd}','${msv}')" class="btn-cert" style="background-color:#dc3545;">
+                📩 Phúc khảo
+              </button>
+            </div>
+          `;
+        }
 
           // ✅ Chỉ hiển thị xếp hạng nếu có điểm
           hangXep = `<p><strong>Xếp hạng:</strong> ${xepHang} / ${tongSoNguoi}</p>`;
@@ -210,6 +219,8 @@ function closeRegisterModal() {
     modal.style.display = "none";
   }
 }
+window.openRegisterModal = openRegisterModal;
+window.closeRegisterModal = closeRegisterModal;
 // ======= FORM ĐĂNG KÝ NHẬN BẢN CỨNG =======
 // Lắng nghe khi DOM đã tải xong
 document.addEventListener("DOMContentLoaded", function () {
@@ -295,12 +306,12 @@ function showToast(message, type = "success") {
    // Sau 3s, thêm class .exit để trượt ra phải
   setTimeout(() => {
     toast.classList.add("exit");
-  }, 3000);
+  }, 2000);
 
   // Sau 2s, xoá khỏi DOM
   setTimeout(() => {
     toast.remove();
-  }, 2000);
+  }, 3000);
 }
 // ======================= TRA CỨU TRẠNG THÁI ĐƠN =========================
 // Hàm mở modal tra cứu trạng thái đơn
@@ -562,3 +573,30 @@ document.addEventListener("DOMContentLoaded", function () {
       "2025-09-02"
     ];
   });
+
+function guiPhucKhao(sbd, msv) {
+  const email = prompt("📩 Nhập email để BTC liên hệ phản hồi:");
+
+  if (!email) {
+    showToast("⚠️ Bạn cần nhập email để gửi phúc khảo.", "error");
+    return;
+  }
+
+  fetch("/api/phuc-khao", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sbd, msv, email })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        showToast("✅ Yêu cầu phúc khảo đã được gửi!", "success");
+      } else {
+        showToast("❌ " + data.message, "error");
+      }
+    })
+    .catch(err => {
+      console.error("Lỗi:", err);
+      showToast("⚠️ Có lỗi khi gửi yêu cầu phúc khảo.", "error");
+    });
+}

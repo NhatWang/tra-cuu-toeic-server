@@ -2,6 +2,7 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const router = express.Router();
+const PhucKhao = require("../models/PhucKhao");
 
 // Load data.json (chứa điểm thi)
 let diemThi = {};
@@ -66,4 +67,41 @@ router.post('/api/tra-cuu', (req, res) => {
   });
 });
 
+router.post("/api/phuc-khao", async (req, res) => {
+  const { sbd, msv, email } = req.body;
+
+  if (!sbd || !msv || !email) {
+    return res.status(400).json({ success: false, message: "Thiếu SBD, MSSV hoặc Email." });
+  }
+
+  try {
+    // Kiểm tra có tồn tại trong data.json không
+    const thongTin = diemThi[sbd];
+    if (!thongTin || thongTin.msv !== msv) {
+      return res.status(400).json({ success: false, message: "Thông tin không hợp lệ." });
+    }
+
+    // Kiểm tra trùng lặp
+    const existed = await PhucKhao.findOne({ sbd, msv });
+    if (existed) {
+      return res.json({ success: false, message: "❌ Bạn đã gửi yêu cầu phúc khảo trước đó." });
+    }
+
+    // ✅ Tạo mới kèm email
+    const newRequest = new PhucKhao({ sbd, msv, email, time: new Date(), status: "dang_xu_ly" });
+    await newRequest.save();
+
+    console.log(`📩 [PHÚC KHẢO] MSSV: ${msv}, SBD: ${sbd}, Email: ${email}`);
+    return res.json({
+      success: true,
+      data: { sbd, msv, email },
+      message: "✅ Đã nhận yêu cầu phúc khảo."
+    });
+  } catch (error) {
+    console.error("❌ Lỗi lưu phúc khảo:", error);
+    return res.status(500).json({ success: false, message: "Lỗi server." });
+  }
+});
+
 module.exports = router;
+
