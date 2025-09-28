@@ -80,7 +80,7 @@ function traCuuDiem() {
                   <a href="${fileGiayChungNhan}" target="_blank" class="btn-cert">
                     🎓 Xem Giấy Chứng Nhận
                   </a>
-                  <button onclick="guiPhucKhao('${sbd}','${msv}')" class="btn-cert" style="background-color:#dc3545; margin-left: 12px;">
+                  <button onclick="guiPhucKhao('${sbd}','${msv}')" class="btn-cert" style="background-color:#dc3545; margin-left: 12px;" disabled>
                     📩 Phúc khảo
                   </button>
                   <button onclick="openRegisterModal()" class="btn-cert" style="background-color: #ffc107; margin-left: 12px;">
